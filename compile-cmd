@@ -1,0 +1,12 @@
+// A how to compile sample
+
+// Suggest that the project is in /localhome/vp23/RootArchitecture/deploy/skel/skel-2.0.0 folder,where the source files are located
+
+// Here are the steps:
+
+1. 
+cd /localhome/vp23/RootArchitecture/deploy/skel/skel-2.0.0 
+(where the src files are located)
+
+2.
+g++ main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp util.cpp cc/voxel/Voxels.cc cc/voxel/VoxelRef.cc cc/voxel/VoxelFilter.cc cc/voxel/PalagyiFilter.cc cc/voxel/Template.cc cc/voxel/Templates.cc -I/localhome/vp23/RootArchitecture/deploy/skel/qhull-2012.1/src/libqhull -o skel /localhome/vp23/RootArchitecture/deploy/skel/qhull-2012.1/lib/libqhullstatic.a
