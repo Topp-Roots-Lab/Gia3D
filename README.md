@@ -6,7 +6,11 @@ Root3D Skeleton Traits calculates the traits based on skeleton by Olga Symonova 
 Original guide can be found in `compile-cmd`
 
 ```bash
-g++ main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp \ 
+# Download qhull-2012.1 and compile for liqhullstatic.a
+wget https://github.com/qhull/qhull/archive/2012.1.tar.gz -O - | tar -xz
+cd qhull-2012.1 && make && cd ..
+
+g++ main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp \
 ./cc/voxel/Voxels.cc ./cc/voxel/VoxelRef.cc  \
 ./cc/voxel/VoxelFilter.cc ./cc/voxel/PalagyiFilter.cc \
 ./cc/voxel/Template.cc ./cc/voxel/Templates.cc  \
