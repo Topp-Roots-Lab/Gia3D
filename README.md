@@ -8,15 +8,8 @@ Original guide can be found in `compile-cmd`
 
 ```bash
 # Download qhull-2012.1 and compile for liqhullstatic.a
-wget https://github.com/qhull/qhull/archive/2012.1.tar.gz -O - | tar -xz
-cd qhull-2012.1 && make && cd ..
+wget https://github.com/qhull/qhull/archive/2012.1.tar.gz -O - | tar -xz -C /path/to/directory
+pushd qhull-2012.1 && make && popd
 
-echo "export LD_LIBRARY_PATH=$PWD/lib:$LD_LIBRARY_PATH" >> /etc/profile.d/qhull.sh
-source /etc/profile.d/qhull.sh
-
-g++ -Wno-deprecated main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp \
-./cc/voxel/Voxels.cc ./cc/voxel/VoxelRef.cc  \
-./cc/voxel/VoxelFilter.cc ./cc/voxel/PalagyiFilter.cc \
-./cc/voxel/Template.cc ./cc/voxel/Templates.cc  \
--I./qhull-2012.1/src/libqhull -o skel ./qhull-2012.1/lib/libqhullstatic.a
+git clone https://github.com/tparkerd/skel.git && cd skel && make
 ```
