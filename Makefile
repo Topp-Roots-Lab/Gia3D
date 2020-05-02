@@ -8,11 +8,10 @@ SOURCES = main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp util.cpp $(_SOURCES:%=
 _DEPS = /usr/local/src/qhull-2012.1/src/libqhull/
 DEPS =$(_DEPS:%=-I%)
 
-LDFLAGS = -L/usr/local/lib/ -static
 LIBS = -lqhullstatic
 
 skel:
-	$(CXX) $(CXXFLAGS) $(SOURCES) $(DEPS) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(SOURCES) $(DEPS) -o $@ $^ $(LIBS)
 
 .PHONY: clean
 
