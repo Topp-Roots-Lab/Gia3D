@@ -10,7 +10,7 @@ Original guide can be found in `compile-cmd`
 wget https://github.com/qhull/qhull/archive/2012.1.tar.gz -O - | tar -xz
 cd qhull-2012.1 && make && cd ..
 
-g++ main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp \
+g++ -Wno-deprecated main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp \
 ./cc/voxel/Voxels.cc ./cc/voxel/VoxelRef.cc  \
 ./cc/voxel/VoxelFilter.cc ./cc/voxel/PalagyiFilter.cc \
 ./cc/voxel/Template.cc ./cc/voxel/Templates.cc  \
