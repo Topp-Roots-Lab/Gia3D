@@ -11,6 +11,9 @@ Original guide can be found in `compile-cmd`
 wget https://github.com/qhull/qhull/archive/2012.1.tar.gz -O - | tar -xz
 cd qhull-2012.1 && make && cd ..
 
+echo "export LD_LIBRARY_PATH=$PWD/lib:$LD_LIBRARY_PATH" >> /etc/profile.d/qhull.sh
+source /etc/profile.d/qhull.sh
+
 g++ -Wno-deprecated main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp \
 ./cc/voxel/Voxels.cc ./cc/voxel/VoxelRef.cc  \
 ./cc/voxel/VoxelFilter.cc ./cc/voxel/PalagyiFilter.cc \
