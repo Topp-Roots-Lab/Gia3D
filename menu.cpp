@@ -29,7 +29,7 @@ void root_graph_output(string filename)
 	float scale;
 	char strsc[100];
 	printf("Enter scale factor (suggested value appr. 2): ");
-	scanf("%s", &strsc);
+	scanf("%s", strsc);
 	scale=(float)atof(strsc);	
 
 	// create a root model from the file //rtvox format

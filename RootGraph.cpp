@@ -1177,8 +1177,8 @@ void RootGraph::graph_description_output(string filename, map<int,vector<float> 
 
 	FILE * f = fopen(filename.c_str(), "w");
 	
-	fprintf(f, "%d\n",descr.size());
-	fprintf(f, "%d\n",descr.begin()->second.size());
+	fprintf(f, "%lu\n",descr.size());
+	fprintf(f, "%lu\n",descr.begin()->second.size());
 	for(dit=descr.begin(); dit!=descr.end(); dit++)
 	{
 		indit=inds.find(dit->first);
