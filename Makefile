@@ -11,7 +11,7 @@ DEPS =$(_DEPS:%=-I%)
 LIBS =-lqhullstatic
 
 skel:
-	$(CXX) $(CXXFLAGS) $(SOURCES) $(DEPS) -o $@ $^ $(LIBS)
+	$(CXX) $(CXXFLAGS) $(SOURCES) $(DEPS) $(LIBS) -o $@ $^
 
 .PHONY: clean
 
