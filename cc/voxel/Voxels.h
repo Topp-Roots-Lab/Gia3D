@@ -52,15 +52,13 @@ static const VoxelType ANY_TYPE = 127;
 
 static const VoxelType VISITED = 0x80;
 
-using stdext::hash_set;
-using stdext::hash_map;
-
+using __gnu_cxx::hash_map;
+using __gnu_cxx::hash_set;
 
 class Voxels
 {
 
 public:
-
   Voxels();
   Voxels(int width, int height, int depth, int with_types = 1);
   ~Voxels();
@@ -69,7 +67,7 @@ public:
   void clear();
   void clear(VoxelType value);
 
-  void set_voxels(hash_map<int,float> &m);
+  void set_voxels(hash_map<int, float> &m);
 
   void invert();
 
@@ -79,23 +77,25 @@ public:
   int get_wxh() { return wxh; }
   int get_size() { return size; }
 
- // void compute_bounding_box();
- // void get_bounding_box(Vector *bmin_p, Vector *bmax_p) { *bmin_p = bmin, *bmax_p = bmax; }
+  // void compute_bounding_box();
+  // void get_bounding_box(Vector *bmin_p, Vector *bmax_p) { *bmin_p = bmin, *bmax_p = bmax; }
 
   // for voxel to mesh coordinates correspondence
- // Vector& get_norm_translate() { return norm_translate; }
- // void set_norm_translate(Vector new_translate) { norm_translate = new_translate; }
- // Float get_norm_scale() { return norm_scale; }
- // void set_norm_scale(Float new_factor) { norm_scale = new_factor; }
+  // Vector& get_norm_translate() { return norm_translate; }
+  // void set_norm_translate(Vector new_translate) { norm_translate = new_translate; }
+  // Float get_norm_scale() { return norm_scale; }
+  // void set_norm_scale(Float new_factor) { norm_scale = new_factor; }
 
   inline VoxelType operator[](int index) const { return voxels[index]; }
-  inline VoxelType& operator[](int index) { return voxels[index]; }
+  inline VoxelType &operator[](int index) { return voxels[index]; }
 
-  inline VoxelType get_neighbour(int index, int nb_index) {
+  inline VoxelType get_neighbour(int index, int nb_index)
+  {
     return voxels[index + nb_delta[nb_index]];
   }
   void get_neighbours(int index, VoxelType *nb);
-  inline int get_neighbour_index(int index, int nb_index) {
+  inline int get_neighbour_index(int index, int nb_index)
+  {
     return index + nb_delta[nb_index];
   }
   int get_nr_neighbours(int index);
@@ -107,18 +107,23 @@ public:
   int get_nr_nonshared_edges(VoxelType *nb);
   int get_nr_nonshared_vertices(VoxelType *nb);
 
-
   void init_deltas();
 
   void get_face_neighbours(int index, VoxelType *nb);
-  inline int get_face_neighbour_index(int voxel_index, int index) {
-    return voxel_index + face_delta[index]; }
+  inline int get_face_neighbour_index(int voxel_index, int index)
+  {
+    return voxel_index + face_delta[index];
+  }
   void get_edge_neighbours(int index, VoxelType *nb);
-  inline int get_edge_neighbour_index(int voxel_index, int index) {
-    return voxel_index + edge_delta[index]; }
+  inline int get_edge_neighbour_index(int voxel_index, int index)
+  {
+    return voxel_index + edge_delta[index];
+  }
   void get_vertex_neighbours(int index, VoxelType *nb);
-  inline int get_vertex_neighbour_index(int voxel_index, int index) {
-    return voxel_index + vertex_delta[index]; }
+  inline int get_vertex_neighbour_index(int voxel_index, int index)
+  {
+    return voxel_index + vertex_delta[index];
+  }
   int has_empty(VoxelType *nb, int size);
 
   //static Vector compute_coordinates(int voxel_index);
@@ -130,7 +135,7 @@ public:
   void process_votes();
 
   int get_index(int x, int y, int z);
-  int get_index(Float x, Float y, Float z) { return get_index((int) x, (int) y, (int) z); }
+  int get_index(Float x, Float y, Float z) { return get_index((int)x, (int)y, (int)z); }
 
   void store_copy();
   void swap_copy();
@@ -141,7 +146,8 @@ public:
   void init_types();
   void init_types(VoxelType value);
   inline int get_type(int index) { return types[index] & 0x7f; }
-  void set_type(int index, int new_value) {
+  void set_type(int index, int new_value)
+  {
     types[index] &= 0x80;
     types[index] += new_value;
   }
@@ -151,21 +157,18 @@ public:
   void set_visited(int index) { types[index] |= 0x80; }
   void reset_visited(int index) { types[index] &= 0x7f; }
 
-
   void update_voxel_refs();
 
-  friend ostream& operator<<(ostream& out_stream, Voxels& voxels);
+  friend ostream &operator<<(ostream &out_stream, Voxels &voxels);
 
   VoxelType *get_voxels_p() { return voxels; }
-  int get_voxel_value(int index) { return (int)(&voxels[index]); }
+  int get_voxel_value(int index) { return (int)(voxels[index]); }
   int get_voxel_value_int(int index) { return (int)(voxels[index]); }
   int get_nonzeroVoxNumber();
   int get_euler_characteristics() { return euler; }
   void init_euler_characteristics();
 
-
 private:
-
   int voxels_changed;
 
   // dimensions
@@ -175,8 +178,8 @@ private:
   //Vector bmin, bmax;
 
   // both used for voxel-mesh correspondence transform
- // Vector norm_translate;
- // Float norm_scale;
+  // Vector norm_translate;
+  // Float norm_scale;
 
   int clear_value;
   VoxelType *types;
@@ -187,7 +190,6 @@ private:
   int voxels_in_xoy_slice(int height_index, int front, int back, int left, int right);
   int voxels_in_xoz_slice(int width_index, int top, int bottom, int front, int back);
   int voxels_in_yoz_slice(int depth_index, int top, int bottom, int left, int right);
-
 
   //
   // neighbour support
@@ -203,9 +205,6 @@ private:
   int plane_delta[3][8];
   void init_plane_deltas();
 
-
-};  // Voxels class
-
+}; // Voxels class
 
 #endif
-

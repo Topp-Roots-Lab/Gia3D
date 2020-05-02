@@ -33,8 +33,6 @@
 class PalagyiControl;
 
 
-
-
 class PalagyiFilter : public VoxelFilter
 {
 

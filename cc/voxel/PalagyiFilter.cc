@@ -29,8 +29,8 @@
 #include <hash_set>
 
 using namespace std;
-using stdext::hash_set;
-using stdext::hash_map;
+using __gnu_cxx::hash_set;
+using __gnu_cxx::hash_map;
 
 #define DEBUG
 int PalagyiFilter::order[8] = {2, 5, 3, 4, 1, 6, 0, 7};
@@ -384,7 +384,7 @@ PalagyiFilter::apply_template_set_std_fast(int direction, hash_set<int> &er, has
 
   VoxelType nb[27];
   int nr_templates = ts.get_nr_templates();
-  int size = voxels.get_size();
+  // int size = voxels.get_size();
   hash_set<int>::iterator it;
 
   for(it=bd.begin(); it!=bd.end(); it++)
@@ -437,7 +437,7 @@ PalagyiFilter::apply_template_set_fast(int direction, hash_set<int> &bd)
 
   VoxelType nb[27];
   int nr_templates = ts.get_nr_templates();
-  int size = voxels.get_size();
+  // int size = voxels.get_size();
   hash_set<int>::iterator it;
 
   for(it=bd.begin(); it!=bd.end(); it++)

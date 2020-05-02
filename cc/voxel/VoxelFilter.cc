@@ -26,10 +26,7 @@
 #include "VoxelFilter.h"
 
 using namespace std;
-
-
-
-
+using __gnu_cxx::hash_set;
 
 VoxelFilter::VoxelFilter(Voxels& voxels_ref) :
   VoxelRef(voxels_ref)

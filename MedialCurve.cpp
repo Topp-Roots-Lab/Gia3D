@@ -8,11 +8,14 @@
 #include "RootGraph.h"
 #include "cc/voxel/VoxelFilter.h"
 #include "cc/voxel/PalagyiFilter.h"
+#include <limits.h>
 #ifdef __cplusplus /* identifies C++ */
 extern "C" { // tell the C++ compiler that you have C decls
 #include "libqhull.h"
 }
 #endif
+
+using __gnu_cxx::hash_set;
 
 //#define DEBUG
 
@@ -797,7 +800,7 @@ void MedialCurve::thinning(hash_map<int, float> &distR)
 				printf("Error in thinning, can't find erosion distance!\n");
 				continue;
 			}
-			newvs.insert(make_pair<int,float>(i,it->second));
+			newvs.insert(make_pair(i,it->second));
 		}
 		//output to a file
 	/*filename = "thin_test";
@@ -957,7 +960,7 @@ void MedialCurve::thinning()
 	int s=vv.get_size();
 	for(int i=0; i<s; i++)
 		if(vv[i]==1)
-			newvs.insert(make_pair<int,float>(i,1.f));
+			newvs.insert(make_pair(i,1.f));
 	voxset.swap(newvs);
 }
 

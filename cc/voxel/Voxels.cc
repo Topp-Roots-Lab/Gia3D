@@ -46,6 +46,7 @@
 
 static Voxels *cur_voxels = 0;
 
+using __gnu_cxx::hash_set;
 using namespace std;
 
 

@@ -2,9 +2,11 @@
 #include <set>
 #include <map>
 #include <hash_map>
+#include <hash_set>
 #include <vector>
 using namespace std;
-using namespace stdext;
+using __gnu_cxx::hash_set;
+using __gnu_cxx::hash_map;
 
 struct coord
 {

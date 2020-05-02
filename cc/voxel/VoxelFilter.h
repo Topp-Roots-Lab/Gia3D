@@ -28,7 +28,8 @@
 #include <hash_map>
 #include "VoxelRef.h"
 
-using stdext::hash_map;
+using __gnu_cxx::hash_set;
+using __gnu_cxx::hash_map;
 
 
 

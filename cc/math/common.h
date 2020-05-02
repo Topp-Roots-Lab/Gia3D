@@ -19,15 +19,9 @@
 #ifndef __COMMON_H
 #define __COMMON_H
 
-
-
-
-
 typedef double Float;
 typedef short Short;
 typedef unsigned char byte;
-
-
 
 #if WINDOWS_NT
 

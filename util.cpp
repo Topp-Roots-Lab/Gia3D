@@ -3,6 +3,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <queue>
+using __gnu_cxx::hash_set;
 
 using namespace std;
 

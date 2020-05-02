@@ -3,6 +3,9 @@
 #include "cc/voxel/Voxels.h"
 #include "RootGraph.h"
 
+
+using __gnu_cxx::hash_set;
+
 class MedialCurve
 {
 public:
