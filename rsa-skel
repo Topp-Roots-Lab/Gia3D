@@ -1,8 +1,0 @@
-#!/bin/sh
-#newgrp rootarch
-#umask 0007
-
-f=`readlink -f "$0"`
-dir=`dirname "$f"`
-
-${dir}/skel/skel-2.0 $@
