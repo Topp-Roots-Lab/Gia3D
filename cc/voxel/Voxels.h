@@ -1,39 +1,32 @@
 //
 // binvox, a binary 3D mesh voxelizer
 // Copyright (c) 2004-2007 by Patrick Min, patrick.n.min "at" gmail "dot" com
-// 
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-// 
+//
 //
 // $Id: Voxels.h,v 1.28 2004/10/19 11:43:27 min Exp min $
 //
 // comment: added set_voxels function by Olga Symonova (olga.symonova "at" gmail "dot" com) in 2010.
 
-//vp
-#include <ext/hash_map>
-#include <ext/hash_set>
-
 #ifndef __VOXELS_H
 #define __VOXELS_H
 
 #include <fstream>
-
-//vp - commented
-//#include <hash_set>
-//#include <hash_map>
-
+#include <hash_set>
+#include <hash_map>
 #include "typedefs.h"
 #include "../math/common.h"
 #include "../math/Vector.h"
@@ -59,25 +52,9 @@ static const VoxelType ANY_TYPE = 127;
 
 static const VoxelType VISITED = 0x80;
 
-// 2012-09-20
-//
-// Vladimir Popov added these namespaces, when adjusting this code to Linux
-//
-//using stdext::hash_set;
-//using stdext::hash_map;
+using stdext::hash_set;
+using stdext::hash_map;
 
-// 2012-09-20
-//
-// Vladimir Popov changed (if matches were found) below, when adjusting this code to Linux
-//
-// >> substituted by > >  in all generic types (templates)   
-// for instance,map<int,pair<int,int>>  changed to map<int,pair<int,int> >
-//
-// stdext:: substituted by __gnu_cxx::
-//
-// hash_map substituted by __gnu_cxx::hash_map
-//
-// hash_set substituted by __gnu_cxx::hash_set
 
 class Voxels
 {
@@ -91,13 +68,13 @@ public:
   void init(int width, int height, int depth, int with_types = 1);
   void clear();
   void clear(VoxelType value);
-  
-  void set_voxels(__gnu_cxx::hash_map<int,float> &m);
+
+  void set_voxels(hash_map<int,float> &m);
 
   void invert();
-  
+
   int needs_update() { return voxels_changed; }
-  
+
   void get_dimensions(int *width_ptr, int *height_ptr, int *depth_ptr);
   int get_wxh() { return wxh; }
   int get_size() { return size; }
@@ -110,7 +87,7 @@ public:
  // void set_norm_translate(Vector new_translate) { norm_translate = new_translate; }
  // Float get_norm_scale() { return norm_scale; }
  // void set_norm_scale(Float new_factor) { norm_scale = new_factor; }
-  
+
   inline VoxelType operator[](int index) const { return voxels[index]; }
   inline VoxelType& operator[](int index) { return voxels[index]; }
 
@@ -129,10 +106,10 @@ public:
   int get_nr_nonshared_faces(VoxelType *nb);
   int get_nr_nonshared_edges(VoxelType *nb);
   int get_nr_nonshared_vertices(VoxelType *nb);
-  
-  
+
+
   void init_deltas();
-  
+
   void get_face_neighbours(int index, VoxelType *nb);
   inline int get_face_neighbour_index(int voxel_index, int index) {
     return voxel_index + face_delta[index]; }
@@ -147,20 +124,20 @@ public:
   //static Vector compute_coordinates(int voxel_index);
   static void compute_int_coordinates(int voxel_index, int *coords);
   static int squared_distance(int index1, int index2);
-  
+
   // for voxelization
   void vote(byte *screen_buffer, int axis, int direction, int slice);
   void process_votes();
 
   int get_index(int x, int y, int z);
   int get_index(Float x, Float y, Float z) { return get_index((int) x, (int) y, (int) z); }
-  
+
   void store_copy();
   void swap_copy();
   void and_with_copy();
-  
+
   void dilate();
-  
+
   void init_types();
   void init_types(VoxelType value);
   inline int get_type(int index) { return types[index] & 0x7f; }
@@ -180,30 +157,17 @@ public:
   friend ostream& operator<<(ostream& out_stream, Voxels& voxels);
 
   VoxelType *get_voxels_p() { return voxels; }
-  // 2012-09-20
-  //
-  // Vladimir Popov commented, when adjusting this code to Linux
-  //int get_voxel_value(int index) { return (int)(&voxels[index]); }
-  //
-  // 2012-09-20
-  //
-  // Vladimir Popov added one line below, when adjusting this code to Linux
-  //
-  //uintptr_t is type, which is unsigned type guaranteed to be able to hold pointers;
-  //We compile on 64 bits machine, so conveting VoxelType(=unsigned char) to its pointer is not acceptable
-  //and should be fixed.
-  int get_voxel_value(int index) { return (uintptr_t)(&voxels[index]); }
-
+  int get_voxel_value(int index) { return (int)(&voxels[index]); }
   int get_voxel_value_int(int index) { return (int)(voxels[index]); }
   int get_nonzeroVoxNumber();
   int get_euler_characteristics() { return euler; }
   void init_euler_characteristics();
 
-  
+
 private:
 
   int voxels_changed;
-  
+
   // dimensions
   int width, height, depth, wxh;
   int size;
@@ -212,8 +176,8 @@ private:
 
   // both used for voxel-mesh correspondence transform
  // Vector norm_translate;
- // Float norm_scale;  
-  
+ // Float norm_scale;
+
   int clear_value;
   VoxelType *types;
   VoxelType *voxels;
@@ -224,7 +188,7 @@ private:
   int voxels_in_xoz_slice(int width_index, int top, int bottom, int front, int back);
   int voxels_in_yoz_slice(int depth_index, int top, int bottom, int left, int right);
 
-  
+
   //
   // neighbour support
   //
@@ -239,7 +203,7 @@ private:
   int plane_delta[3][8];
   void init_plane_deltas();
 
-  
+
 };  // Voxels class
 
 

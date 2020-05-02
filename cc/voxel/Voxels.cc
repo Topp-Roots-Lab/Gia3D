@@ -1,21 +1,21 @@
 //
 // binvox, a binary 3D mesh voxelizer
 // Copyright (c) 2004-2007 by Patrick Min, patrick.n.min "at" gmail "dot" com
-// 
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-// 
+//
 //
 // $Id: Voxels.cc,v 1.31 2004/10/19 11:43:26 min Exp min $
 //
@@ -44,28 +44,11 @@
 #define DEBUG_SIMPLE(x)
 #define DEBUG_FIND_LINE(x)
 
-// 2012-09-20
-//
-// Vladimir Popov added, when adjusting this code to Linux
-//
-// newline at the end of this file
-
-// 2012-09-20
-//
-// Vladimir Popov changed (if matches were found) below, when adjusting this code to Linux
-//
-// >> substituted by > >  in all generic types (templates)   
-// for instance,map<int,pair<int,int>>  changed to map<int,pair<int,int> >
-//
-// stdext:: substituted by __gnu_cxx::
-//
-// hash_map substituted by __gnu_cxx::hash_map
-//
-// hash_set substituted by __gnu_cxx::hash_set
-
 static Voxels *cur_voxels = 0;
 
 using namespace std;
+
+
 
 
 
@@ -75,7 +58,7 @@ Voxels::Voxels()
   voxels_copy = 0;
   types = 0;
   types_copy = 0;
-  
+
   cur_voxels = this;  // for static function "compute_coordinates"
 
   voxels_changed = 0;
@@ -83,7 +66,7 @@ Voxels::Voxels()
 }  // default constructor
 
 
-  
+
 Voxels::Voxels(int width, int height, int depth, int with_types)
 {
   voxels = 0;
@@ -110,7 +93,7 @@ Voxels::init(int width, int height, int depth, int with_types)
 #ifdef DEBUG
   cout << "Voxels::init(" << width << ", " << height << ", " << depth << ")" << endl;
 #endif
-  
+
   this->width = width;
   this->height = height;
   this->depth = depth;
@@ -134,13 +117,13 @@ Voxels::init(int width, int height, int depth, int with_types)
   }
   else
     types = 0;
-  
+
   clear();
 
   init_deltas();
 
   update_voxel_refs();
-  
+
 }  // Voxels::init
 
 
@@ -151,7 +134,7 @@ Voxels::~Voxels()
   if (voxels_copy) delete[] voxels_copy;
   if (types_copy) delete[] types_copy;
   if (types) delete[] types;
-  
+
 }  // destructor
 
 
@@ -193,7 +176,7 @@ Voxels::get_dimensions(int *width_ptr, int *height_ptr, int *depth_ptr)
 //
 //  bmin.set(1e6, 1e6, 1e6);
 //  bmax.set(-1e6, -1e6, -1e6);
-//  
+//
 //  int index = 0;
 //  for(int i=0; i < depth; i++) {
 //    float x = (float)(i + 0.5) / depth;
@@ -216,13 +199,13 @@ Voxels::get_dimensions(int *width_ptr, int *height_ptr, int *depth_ptr)
 //  }  // for
 //
 //  cout << "  bounding box: " << bmin << " - " << bmax << endl;
-//  
+//
 //}  // Voxels::compute_bounding_box
 
 
 int Voxels::get_nonzeroVoxNumber()
 {
-	int n=0;	
+	int n=0;
 	for(int i=0; i<size; i++)
 		if(voxels[i]==1)
 			n++;
@@ -247,9 +230,9 @@ Voxels::get_neighbours(int index, VoxelType *nb)
 {
   for(int i=0; i < 27; i++) {
 	  int ind = get_neighbour_index(index,i);
-	  if(ind<0 || ind>size) 
+	  if(ind<0 || ind>size)
 	  {
-		  printf("Neigbor indices are outside of the range!\n");		 
+		  printf("Neigbor indices are outside of the range!\n");
 	  }
 	  nb[i] = get_neighbour(index, i);
   }  // for
@@ -280,21 +263,21 @@ Voxels::update_voxel_refs()
 
 
 /*
-This function sets the value of voxels 
-in the hash_map to 1. 
-The voxels listed in the hash_map are 
+This function sets the value of voxels
+in the hash_map to 1.
+The voxels listed in the hash_map are
 represented by their linear indices.
 author: Olga Symonova
 */
 void
-Voxels::set_voxels(__gnu_cxx::hash_map<int,float> &m)
-{		
+Voxels::set_voxels(hash_map<int,float> &m)
+{
 	for(int i=0; i<size; i++)
 		voxels[i]=0;
 
-	__gnu_cxx::hash_map<int,float>::iterator it;	
+	hash_map<int,float>::iterator it;
 	for(it=m.begin(); it!=m.end(); it++)
-	{		
+	{
 		voxels[it->first]=1;
 	}
 	VoxelRef::check_update();
@@ -306,7 +289,7 @@ void
 Voxels::vote(byte *screen_buffer, int axis, int direction, int slice)
 {
   // code assumes all dimensions are equal
-  
+
   int i, j;
   int i_reversed;
   int *i_ptr;
@@ -348,11 +331,11 @@ Voxels::vote(byte *screen_buffer, int axis, int direction, int slice)
 	int voxel_index = (*x_ptr) * wxh + (*z_ptr) * width + (*y_ptr);
 	voxels[voxel_index]++;
       }
-      
+
     }  // for
   }  // for
   //  cout << endl;
-  
+
 }  // Voxels::vote
 
 
@@ -361,7 +344,7 @@ void
 Voxels::process_votes()
 {
   cout << "Voxels::process_votes" << endl;
-  
+
   for(int i=0; i < size; i++) {
     if (voxels[i] > 2) voxels[i] = 1;
     else voxels[i] = 0;
@@ -375,7 +358,7 @@ void
 Voxels::store_copy()
 {
   //  cout << "Voxels::store_copy" << endl;
-  
+
   if (voxels_copy) delete[] voxels_copy;
   voxels_copy = new VoxelType[size];
   assert(voxels_copy);
@@ -387,7 +370,7 @@ Voxels::store_copy()
     voxels_copy[i] = voxels[i];
     types_copy[i] = types[i];
   }  // for
-  
+
 }  // Voxels::store_copy
 
 
@@ -409,10 +392,10 @@ Voxels::swap_copy()
   temp = types;
   types = types_copy;
   types_copy = temp;
-  
+
 }  // Voxels::swap_copy
 
-  
+
 
 void
 Voxels::and_with_copy()
@@ -435,9 +418,9 @@ Voxels::voxels_in_xoy_slice(int height_index, int front, int back, int left, int
 {
   //   cout << "voxels_in_xoy_slice(" << height_index << ", " << front << ", " << back
   //        << ", " << left << ", " << right << ")" << endl;
-  
+
   int nr_voxels = 0;
-  
+
   for(int i=back; i < front; i++) {
     int index = i * wxh + height_index * width + left;
     for(int j=left; j < right; j++) {
@@ -447,7 +430,7 @@ Voxels::voxels_in_xoy_slice(int height_index, int front, int back, int left, int
   }
 
   return nr_voxels;
-      
+
 }  // Voxels::voxels_in_xoy_slice
 
 
@@ -466,7 +449,7 @@ Voxels::voxels_in_xoz_slice(int width_index, int top, int bottom, int front, int
   }
 
   return nr_voxels;
-  
+
 }  // Voxels::voxels_in_xoz_slice
 
 
@@ -527,8 +510,8 @@ Voxels::init_face_edge_vertex_deltas()
 
 }  // Voxels::init_deltas
 
-  
-  
+
+
 void
 Voxels::get_face_neighbours(int index, VoxelType *nb)
 {
@@ -543,7 +526,7 @@ Voxels::get_face_neighbours(int index, VoxelType *nb)
 
 }  // Voxels::get_face_neighbours(index, nb)
 
-		
+
 
 void
 Voxels::get_edge_neighbours(int index, VoxelType *nb)
@@ -557,7 +540,7 @@ Voxels::get_edge_neighbours(int index, VoxelType *nb)
     else
       nb[i] = 0;
   }
-    
+
 }  // Voxels::get_edge_neighbours(index, nb)
 
 
@@ -573,7 +556,7 @@ Voxels::get_vertex_neighbours(int index, VoxelType *nb)
     else
       nb[i] = 0;
   }
-  
+
 }  // Voxels::get_vertex_neighbours
 
 
@@ -592,7 +575,7 @@ Voxels::has_empty(VoxelType *nb, int size)
 
 }  // Voxels::has_empty
 
-  
+
 
 int
 Voxels::are_neighbours(int index1, int index2)
@@ -618,7 +601,7 @@ Voxels::are_neighbours(int index1, int index2)
 }  // Voxels::are_neighbours
 
 
-  
+
 void
 Voxels::init_nb_deltas()
 {
@@ -651,7 +634,7 @@ Voxels::init_nb_deltas()
   nb_delta[24] = wxh + width - 1;
   nb_delta[25] = wxh + width;
   nb_delta[26] = wxh + width + 1;
-    
+
 }  // Voxels::init_nb_deltas
 
 
@@ -673,7 +656,7 @@ Voxels::init_plane_deltas()
   plane_delta[1][1] = -wxh;
   plane_delta[1][2] = -wxh + width;
   plane_delta[1][3] = width;
-  plane_delta[1][4] = wxh + width; 
+  plane_delta[1][4] = wxh + width;
   plane_delta[1][5] = wxh;
   plane_delta[1][6] = wxh - width;
   plane_delta[1][7] = -width;
@@ -724,11 +707,11 @@ void
 Voxels::dilate()
 {
   cout << "Voxels::dilate" << endl;
-  
+
   init_deltas();
 
   for(int i=1; i < (depth - 1); i++) {
-    for(int j=1; j < (height - 1); j++) {      
+    for(int j=1; j < (height - 1); j++) {
       for(int k=1; k < (width - 1); k++) {
 		  int index=get_index(i,j,k);
 	if (voxels[index] == 1) {
@@ -774,7 +757,7 @@ Voxels::dilate()
 Voxels::dilate()
 {
   cout << "Voxels::dilate" << endl;
-  
+
   init_deltas();
 
   for(int i=1; i < (depth - 1); i++) {
@@ -826,7 +809,7 @@ void
 Voxels::init_types(VoxelType value)
 {
   if (!types) return;
-  
+
   for(int i=0; i < size; i++) {
     if (voxels[i])
       types[i] = value;
@@ -842,7 +825,7 @@ void
 Voxels::init_types()
 {
   init_types(NORMAL);
-  
+
 }  // Voxels::init_types
 
 
@@ -861,14 +844,14 @@ Voxels::get_nr_neighbours(int index)
 }  // Voxels::get_nr_neighbours
 
 
-  
+
 void
 Voxels::compute_int_coordinates(int voxel_index, int *coords)
 {
   int wxh = cur_voxels->get_wxh();
   int width, height, depth;
   cur_voxels->get_dimensions(&width, &height, &depth);
-  
+
   coords[0] = (voxel_index / wxh);
   coords[2] = (voxel_index - wxh * coords[0]) / width;
   coords[1] = voxel_index - wxh * coords[0] - width * coords[2];
@@ -888,34 +871,34 @@ Voxels::squared_distance(int index1, int index2)
   int dx = v[0] - w[0];
   int dy = v[1] - w[1];
   int dz = v[2] - w[2];
-  
+
   return (dx * dx + dy * dy + dz * dz);
 
 }  // Voxels::squared_distance (static)
 
-  
-  
+
+
 //Vector
 //Voxels::compute_coordinates(int voxel_index)
 //{
 //  int width, height, depth;
 //  cur_voxels->get_dimensions(&width, &height, &depth);
-//  
+//
 //  // first compute coordinates as integers
 //  int int_coords[3];
 //  compute_int_coordinates(voxel_index, int_coords);
-//  
+//
 //  float x = (float) int_coords[0] / depth;
 //  float y = (float) int_coords[1] / width;
 //  float z = (float) int_coords[2] / height;
 //
 //  Vector p;
 //  p.set(x, y, z);
-//  
+//
 //  //  cout << "Voxels::compute_coordinates, xyz: " << x << ", " << y << ", " << z << endl;
 //
 //  return p;
-//  
+//
 //}  // Voxels::compute_coordinates
 
 
@@ -941,7 +924,7 @@ ostream& operator<<(ostream& out_stream, Voxels& voxels)
   }
 
   cout << endl << "-----" << endl << endl;
-  
+
   index = 0;
   for(int i=0; i < voxels.depth; i++) {
     for(int j = voxels.height - 1; j >= 0; j--) {
@@ -960,7 +943,7 @@ ostream& operator<<(ostream& out_stream, Voxels& voxels)
   }
 
   return out_stream;
-  
+
 }  // operator<<
 
 
@@ -1047,7 +1030,7 @@ Voxels::get_nr_6adj_bg_cc(int index)
   for(int i=0; i < 27; i++) visited[i] = 0;
 
   int cur_index;
-  
+
   static int face_indices[6] = {4, 10, 12, 14, 16, 22};
   int found = 0;
   for(int i=0; (i < 6) && !found; i++) {
@@ -1063,12 +1046,12 @@ Voxels::get_nr_6adj_bg_cc(int index)
   // from there, travel to all other voxels in 18 neighbourhood, and mark
   vector<int> to_visit;
   to_visit.push_back(cur_index);
-  
+
   while (!to_visit.empty()) {
     cur_index = to_visit[to_visit.size() - 1];
     visited[cur_index] = 1;
     to_visit.pop_back();
-    
+
     // get neighbours of cur_index
     for(int i=0; (i < 4) && (local_6_nb_18_nbh[cur_index][i] != -1); i++) {
       int nb_index = local_6_nb_18_nbh[cur_index][i];
@@ -1086,7 +1069,7 @@ Voxels::get_nr_6adj_bg_cc(int index)
       return 2;
     }
   }
-    
+
   return 1;
 
 }  // Voxels::get_nr_6_adj_bg_cc
@@ -1098,66 +1081,66 @@ Voxels::invert()
 {
   cout << "Voxels::invert" << endl;
   for(int i=0; i < size; i++) voxels[i] = 1 - voxels[i];
-  
+
 }  // Voxels::invert
 
 
 
 void Voxels::init_euler_characteristics()
 {
-	__gnu_cxx::hash_set<int> visd;	
-	
+	hash_set<int> visd;
+
 	int vx=0;
 	int f=0;
 	int e=0;
 	int v=0;
-	vector<int> nb(27);		
-  
+	vector<int> nb(27);
+
 	for(int i=0; i < size; i++)
 	{
 		if(voxels[i]==0)
 			continue;
-		vx++;		
-		
+		vx++;
+
 		get_neighbours_index(i, nb);
-		
+
 		//count faces
-		if(visd.find(nb[4])==visd.end()) f++;		
-		if(visd.find(nb[10])==visd.end()) f++;		
-		if(visd.find(nb[12])==visd.end()) f++;		
-		if(visd.find(nb[14])==visd.end()) f++;		
-		if(visd.find(nb[16])==visd.end()) f++;		
-		if(visd.find(nb[22])==visd.end()) f++;		
+		if(visd.find(nb[4])==visd.end()) f++;
+		if(visd.find(nb[10])==visd.end()) f++;
+		if(visd.find(nb[12])==visd.end()) f++;
+		if(visd.find(nb[14])==visd.end()) f++;
+		if(visd.find(nb[16])==visd.end()) f++;
+		if(visd.find(nb[22])==visd.end()) f++;
 
 		//count edges
-		if(visd.find(nb[1])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[10])==visd.end()) e++;		
-		if(visd.find(nb[3])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[12])==visd.end()) e++;		
-		if(visd.find(nb[5])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[14])==visd.end()) e++;		
-		if(visd.find(nb[7])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[16])==visd.end()) e++;		
+		if(visd.find(nb[1])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[10])==visd.end()) e++;
+		if(visd.find(nb[3])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[12])==visd.end()) e++;
+		if(visd.find(nb[5])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[14])==visd.end()) e++;
+		if(visd.find(nb[7])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[16])==visd.end()) e++;
 
-		if(visd.find(nb[12])==visd.end() && visd.find(nb[9])==visd.end() && visd.find(nb[10])==visd.end()) e++;		
-		if(visd.find(nb[10])==visd.end() && visd.find(nb[11])==visd.end() && visd.find(nb[14])==visd.end()) e++;		
-		if(visd.find(nb[14])==visd.end() && visd.find(nb[17])==visd.end() && visd.find(nb[16])==visd.end()) e++;		
-		if(visd.find(nb[16])==visd.end() && visd.find(nb[15])==visd.end() && visd.find(nb[12])==visd.end()) e++;		
+		if(visd.find(nb[12])==visd.end() && visd.find(nb[9])==visd.end() && visd.find(nb[10])==visd.end()) e++;
+		if(visd.find(nb[10])==visd.end() && visd.find(nb[11])==visd.end() && visd.find(nb[14])==visd.end()) e++;
+		if(visd.find(nb[14])==visd.end() && visd.find(nb[17])==visd.end() && visd.find(nb[16])==visd.end()) e++;
+		if(visd.find(nb[16])==visd.end() && visd.find(nb[15])==visd.end() && visd.find(nb[12])==visd.end()) e++;
 
-		if(visd.find(nb[19])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[10])==visd.end()) e++;		
-		if(visd.find(nb[21])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[12])==visd.end()) e++;		
-		if(visd.find(nb[23])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[14])==visd.end()) e++;		
-		if(visd.find(nb[25])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[16])==visd.end()) e++;		
-				
+		if(visd.find(nb[19])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[10])==visd.end()) e++;
+		if(visd.find(nb[21])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[12])==visd.end()) e++;
+		if(visd.find(nb[23])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[14])==visd.end()) e++;
+		if(visd.find(nb[25])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[16])==visd.end()) e++;
+
 		//count vertices
-		if(visd.find(nb[0])==visd.end() && visd.find(nb[1])==visd.end() && visd.find(nb[3])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[9])==visd.end() && visd.find(nb[10])==visd.end() && visd.find(nb[12])==visd.end() ) v++;		
-		if(visd.find(nb[1])==visd.end() && visd.find(nb[2])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[5])==visd.end() && visd.find(nb[10])==visd.end() && visd.find(nb[11])==visd.end() && visd.find(nb[14])==visd.end() ) v++;		
-		if(visd.find(nb[3])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[6])==visd.end() && visd.find(nb[7])==visd.end() && visd.find(nb[12])==visd.end() && visd.find(nb[15])==visd.end() && visd.find(nb[16])==visd.end() ) v++;		
-		if(visd.find(nb[4])==visd.end() && visd.find(nb[5])==visd.end() && visd.find(nb[7])==visd.end() && visd.find(nb[8])==visd.end() && visd.find(nb[14])==visd.end() && visd.find(nb[16])==visd.end() && visd.find(nb[17])==visd.end() ) v++;		
-		if(visd.find(nb[9])==visd.end() && visd.find(nb[10])==visd.end() && visd.find(nb[12])==visd.end() && visd.find(nb[18])==visd.end() && visd.find(nb[19])==visd.end() && visd.find(nb[21])==visd.end() && visd.find(nb[22])==visd.end() ) v++;		
-		if(visd.find(nb[10])==visd.end() && visd.find(nb[11])==visd.end() && visd.find(nb[14])==visd.end() && visd.find(nb[19])==visd.end() && visd.find(nb[20])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[23])==visd.end() ) v++;		
-		if(visd.find(nb[12])==visd.end() && visd.find(nb[15])==visd.end() && visd.find(nb[16])==visd.end() && visd.find(nb[21])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[24])==visd.end() && visd.find(nb[25])==visd.end() ) v++;		
-		if(visd.find(nb[14])==visd.end() && visd.find(nb[16])==visd.end() && visd.find(nb[17])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[23])==visd.end() && visd.find(nb[25])==visd.end() && visd.find(nb[26])==visd.end() ) v++;		
-		
+		if(visd.find(nb[0])==visd.end() && visd.find(nb[1])==visd.end() && visd.find(nb[3])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[9])==visd.end() && visd.find(nb[10])==visd.end() && visd.find(nb[12])==visd.end() ) v++;
+		if(visd.find(nb[1])==visd.end() && visd.find(nb[2])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[5])==visd.end() && visd.find(nb[10])==visd.end() && visd.find(nb[11])==visd.end() && visd.find(nb[14])==visd.end() ) v++;
+		if(visd.find(nb[3])==visd.end() && visd.find(nb[4])==visd.end() && visd.find(nb[6])==visd.end() && visd.find(nb[7])==visd.end() && visd.find(nb[12])==visd.end() && visd.find(nb[15])==visd.end() && visd.find(nb[16])==visd.end() ) v++;
+		if(visd.find(nb[4])==visd.end() && visd.find(nb[5])==visd.end() && visd.find(nb[7])==visd.end() && visd.find(nb[8])==visd.end() && visd.find(nb[14])==visd.end() && visd.find(nb[16])==visd.end() && visd.find(nb[17])==visd.end() ) v++;
+		if(visd.find(nb[9])==visd.end() && visd.find(nb[10])==visd.end() && visd.find(nb[12])==visd.end() && visd.find(nb[18])==visd.end() && visd.find(nb[19])==visd.end() && visd.find(nb[21])==visd.end() && visd.find(nb[22])==visd.end() ) v++;
+		if(visd.find(nb[10])==visd.end() && visd.find(nb[11])==visd.end() && visd.find(nb[14])==visd.end() && visd.find(nb[19])==visd.end() && visd.find(nb[20])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[23])==visd.end() ) v++;
+		if(visd.find(nb[12])==visd.end() && visd.find(nb[15])==visd.end() && visd.find(nb[16])==visd.end() && visd.find(nb[21])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[24])==visd.end() && visd.find(nb[25])==visd.end() ) v++;
+		if(visd.find(nb[14])==visd.end() && visd.find(nb[16])==visd.end() && visd.find(nb[17])==visd.end() && visd.find(nb[22])==visd.end() && visd.find(nb[23])==visd.end() && visd.find(nb[25])==visd.end() && visd.find(nb[26])==visd.end() ) v++;
+
 		visd.insert(i);
-	}	
-	euler=v-e+f-vx;	
+	}
+	euler=v-e+f-vx;
 }
 
 
@@ -1166,12 +1149,12 @@ int Voxels::get_nr_nonshared_faces(VoxelType *nb)
 {
 	int f=0;
 	//count faces
-	if(nb[4]==0) f++;		
-	if(nb[10]==0) f++;		
-	if(nb[12]==0) f++;		
-	if(nb[14]==0) f++;		
-	if(nb[16]==0) f++;		
-	if(nb[22]==0) f++;	
+	if(nb[4]==0) f++;
+	if(nb[10]==0) f++;
+	if(nb[12]==0) f++;
+	if(nb[14]==0) f++;
+	if(nb[16]==0) f++;
+	if(nb[22]==0) f++;
 	return f;
 }
 
@@ -1179,20 +1162,20 @@ int Voxels::get_nr_nonshared_edges(VoxelType *nb)
 {
 	int e=0;
 	//count edges
-	if(nb[1]==0 && nb[4]==0 && nb[10]==0) e++;		
-	if(nb[3]==0 && nb[4]==0 && nb[12]==0) e++;		
-	if(nb[5]==0 && nb[4]==0 && nb[14]==0) e++;		
-	if(nb[7]==0 && nb[4]==0 && nb[16]==0) e++;		
+	if(nb[1]==0 && nb[4]==0 && nb[10]==0) e++;
+	if(nb[3]==0 && nb[4]==0 && nb[12]==0) e++;
+	if(nb[5]==0 && nb[4]==0 && nb[14]==0) e++;
+	if(nb[7]==0 && nb[4]==0 && nb[16]==0) e++;
 
-	if(nb[12]==0 && nb[9]==0 && nb[10]==0) e++;		
-	if(nb[10]==0 && nb[11]==0 && nb[14]==0) e++;		
-	if(nb[14]==0 && nb[17]==0 && nb[16]==0) e++;		
-	if(nb[16]==0 && nb[15]==0 && nb[12]==0) e++;		
+	if(nb[12]==0 && nb[9]==0 && nb[10]==0) e++;
+	if(nb[10]==0 && nb[11]==0 && nb[14]==0) e++;
+	if(nb[14]==0 && nb[17]==0 && nb[16]==0) e++;
+	if(nb[16]==0 && nb[15]==0 && nb[12]==0) e++;
 
-	if(nb[19]==0 && nb[22]==0 && nb[10]==0) e++;		
-	if(nb[21]==0 && nb[22]==0 && nb[12]==0) e++;		
-	if(nb[23]==0 && nb[22]==0 && nb[14]==0) e++;		
-	if(nb[25]==0 && nb[22]==0 && nb[16]==0) e++;			
+	if(nb[19]==0 && nb[22]==0 && nb[10]==0) e++;
+	if(nb[21]==0 && nb[22]==0 && nb[12]==0) e++;
+	if(nb[23]==0 && nb[22]==0 && nb[14]==0) e++;
+	if(nb[25]==0 && nb[22]==0 && nb[16]==0) e++;
 	return e;
 }
 
@@ -1200,14 +1183,14 @@ int Voxels::get_nr_nonshared_vertices(VoxelType *nb)
 {
 	int v=0;
 	//count vertices
-	if(nb[0]==0 && nb[1]==0 && nb[3]==0 && nb[4]==0 && nb[9]==0 && nb[10]==0 && nb[12]==0 ) v++;		
-	if(nb[1]==0 && nb[2]==0 && nb[4]==0 && nb[5]==0 && nb[10]==0 && nb[11]==0 && nb[14]==0 ) v++;		
-	if(nb[3]==0 && nb[4]==0 && nb[6]==0 && nb[7]==0 && nb[12]==0 && nb[15]==0 && nb[16]==0 ) v++;		
-	if(nb[4]==0 && nb[5]==0 && nb[7]==0 && nb[8]==0 && nb[14]==0 && nb[16]==0 && nb[17]==0 ) v++;		
-	if(nb[9]==0 && nb[10]==0 && nb[12]==0 && nb[18]==0 && nb[19]==0 && nb[21]==0 && nb[22]==0 ) v++;		
-	if(nb[10]==0 && nb[11]==0 && nb[14]==0 && nb[19]==0 && nb[20]==0 && nb[22]==0 && nb[23]==0 ) v++;		
-	if(nb[12]==0 && nb[15]==0 && nb[16]==0 && nb[21]==0 && nb[22]==0 && nb[24]==0 && nb[25]==0 ) v++;		
-	if(nb[14]==0 && nb[16]==0 && nb[17]==0 && nb[22]==0 && nb[23]==0 && nb[25]==0 && nb[26]==0 ) v++;			
+	if(nb[0]==0 && nb[1]==0 && nb[3]==0 && nb[4]==0 && nb[9]==0 && nb[10]==0 && nb[12]==0 ) v++;
+	if(nb[1]==0 && nb[2]==0 && nb[4]==0 && nb[5]==0 && nb[10]==0 && nb[11]==0 && nb[14]==0 ) v++;
+	if(nb[3]==0 && nb[4]==0 && nb[6]==0 && nb[7]==0 && nb[12]==0 && nb[15]==0 && nb[16]==0 ) v++;
+	if(nb[4]==0 && nb[5]==0 && nb[7]==0 && nb[8]==0 && nb[14]==0 && nb[16]==0 && nb[17]==0 ) v++;
+	if(nb[9]==0 && nb[10]==0 && nb[12]==0 && nb[18]==0 && nb[19]==0 && nb[21]==0 && nb[22]==0 ) v++;
+	if(nb[10]==0 && nb[11]==0 && nb[14]==0 && nb[19]==0 && nb[20]==0 && nb[22]==0 && nb[23]==0 ) v++;
+	if(nb[12]==0 && nb[15]==0 && nb[16]==0 && nb[21]==0 && nb[22]==0 && nb[24]==0 && nb[25]==0 ) v++;
+	if(nb[14]==0 && nb[16]==0 && nb[17]==0 && nb[22]==0 && nb[23]==0 && nb[25]==0 && nb[26]==0 ) v++;
 	return v;
 }
 

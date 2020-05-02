@@ -1,34 +1,31 @@
 //
 // thinvox, a binary voxel thinning program
 // Copyright (c) 2004-2007 by Patrick Min, patrick.n.min "at" gmail "dot" com
-// 
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-// 
+//
 //
 // $Id: Templates.cc,v 1.5 2001/01/20 02:38:09 min Exp $
 //
 
 #include "Templates.h"
 
-// 2012-09-20
-//
-// Vladimir Popov added, when adjusting this code to Linux
-//
-// newline at the end of this file
-
 using namespace std;
+
+
+
 
 
 Templates::Templates()
@@ -51,7 +48,7 @@ Templates::convert_type(int new_type)
 //    cout << "new_type: " << new_type << " new_type & UD_MASK: " << (new_type & UD_MASK)
 //         << ", new_type & NS_MASK: " << (new_type & NS_MASK)
 //         << ", new_type & WE_MASK: " << (new_type & WE_MASK) << endl;
-  
+
   if ((type & UD_MASK) != (new_type & UD_MASK)) {
     //    cout << "  calling flip_ud" << endl;
     for(int i=0; i < nr_templates; i++)
@@ -72,7 +69,7 @@ Templates::convert_type(int new_type)
 
 }  // Templates::convert_type
 
-    
+
 
 int
 Templates::already_present(Template& t)
@@ -95,7 +92,7 @@ Templates::add(Template& t)
   T.push_back(t);
   nr_templates++;
   //  cout << "added template, new nr_templates: " << nr_templates << endl;
-  
+
 }  // Templates::add
 
 
@@ -108,12 +105,12 @@ Templates::init_usw()
 {
   // first init 7 base templates
   init_usw_base_templates();
-  
+
   // then reflect each through three planes
   // and check if already present
   for(int i=0; i < nr_templates; i++) {  // !!! nr_templates !!!
     //    cout << "Base template " << i + 1 << ": " << endl << T[i] << endl;
-    
+
     Template refl;
 
     refl = T[i];
@@ -125,7 +122,7 @@ Templates::init_usw()
     refl.reflect_us_dn();
     //    cout << "reflecting through us_dn" << endl;
     if (!already_present(refl)) add(refl);
-    
+
     refl = T[i];
     refl.reflect_uw_de();
     //    cout << "reflecting through uw_de" << endl;
@@ -169,7 +166,7 @@ static char B[7][28] = {
 //  "dbdwwbwwddddwbdwwdwwwwwwwww",
 //  "ddddbdddddbddbdddddddwwwwww",
 //  "ddddbdddddbddbbddddddwwdwwd",
-//  "ddddbddddddbdbddddwwbwwwwww",  
+//  "ddddbddddddbdbddddwwbwwwwww",
 //  //"wwwwwwwwwwwwwbwwwwwbwbwwwww",
 //  //"dwwbwwdwwbwwwbwwwwdwwbwwdww"
 //  "wwwwwwwwwwwwwbwbwbwwwwwwwbw"
@@ -182,13 +179,13 @@ static char B[7][28] = {
 //  "dbdwwbwwddddwbdwwdwwwwwwwww",
 //  "ddddbdddddbddbdddddddwwwwww",
 //  "ddddbdddddbddbbddddddwwdwwd",
-//  "ddddbddddddbdbddddwwbwwwwww",  
+//  "ddddbddddddbdbddddwwbwwwwww",
 //  "wwwwwwwwwwwwwbwwwwwbwbwwwww",
 //  "wwwwwwwwwwwwwbwwwbwwwwwbwbw"
 //  //"dwwbwwdwwbwwwbwwwwdwwbwwdww"
 //  //"wwwwwwwwwwwwwbwwwwdbdbwbdwd"
 //};
-   
+
 void
 Templates::init_usw_base_templates()
 {
@@ -207,7 +204,7 @@ Templates::init_usw_base_templates()
     }
   }
   nr_templates = 7;
-  
+
 }  // Templates::init_usw_base_templates
 
 //void
@@ -228,7 +225,7 @@ Templates::init_usw_base_templates()
 //    }
 //  }
 //  nr_templates = 8;
-//  
+//
 //}  // Templates::init_usw_base_templates
 
 
@@ -250,5 +247,5 @@ Templates::init_usw_base_templates()
 //    }
 //  }
 //  nr_templates = 9;
-//  
+//
 //}  // Templates::init_usw_base_templates

@@ -1,21 +1,14 @@
-#ifndef UTIL_H 
-	#define UTIL_H 
+#ifndef UTIL_H
+	#define UTIL_H
 
 #include <string>
 #include <vector>
 #include "MedialCurve.h"
 
-// 2012-09-20
-//
-// Vladimir Popov added, when adjusting this code to Linux
-//
-// newline at the end of this file
-
 using namespace std;
 
 void tokenize(const string& str, vector<string>& tokens, const string& delimiters = " ");
 void writeVisibleIVEff(string filename, MedialCurve &m);
-void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type);
 void getRGBcolor4Interals(float x, float &r, float &g, float &b);
 void drawSphereIV(string filename, float x, float y, float z, float r);
 //convert back and force between linear index and xyz coordinates
@@ -28,4 +21,3 @@ inline int subind2linind(int i, int j, int k, int Xsize, int Ysize, int Zsize){r
 inline float eucl_dist(float x1, float y1, float z1, float x2, float y2, float z2) {return (float)sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2)+(z1-z2)*(z1-z2));};
 
 #endif
-

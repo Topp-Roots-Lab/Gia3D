@@ -1,40 +1,16 @@
 #include "RootGraph.h"
 #include <queue>
-
-// 2012-09-20
-//
-// Vladimir Popov commented this include, when adjusting this code to Linux
-//#include <hash_set>
-
+#include <hash_set>
 #include <map>
 #include <float.h>
 #include "util.h"
-#ifndef M_PI 
-	#define M_PI 3.14159265358979323846 
-#endif 
-
-// 2012-09-20
-//
-// Vladimir Popov added, when adjusting this code to Linux
-//
-// newline at the end of this file
-
-// 2012-09-20
-//
-// Vladimir Popov changed (if matches were found) below, when adjusting this code to Linux
-//
-// >> substituted by > >  in all generic types (templates)   
-// for instance,map<int,pair<int,int>>  changed to map<int,pair<int,int> >
-//
-// stdext:: substituted by __gnu_cxx::
-//
-// hash_map substituted by __gnu_cxx::hash_map
-//
-// hash_set substituted by __gnu_cxx::hash_set
+#ifndef M_PI
+	#define M_PI 3.14159265358979323846
+#endif
 
 
 RootGraph::RootGraph(void)
-{	
+{
 }
 
 RootGraph::~RootGraph(void)
@@ -43,27 +19,26 @@ RootGraph::~RootGraph(void)
 
 void RootGraph::init(void)
 {
-	E.clear();	
-	v_einc.clear(); 
-	elength.clear(); 
-	e_order.clear(); 
-	v_coord.clear(); 	
+	E.clear();
+	v_einc.clear();
+	elength.clear();
+	e_order.clear();
+	v_coord.clear();
 	arc_v.clear();
 }
-/** 
-* The function creates the minimum spanning tree by default 
-* (if the argument is true), otherwise if the argument is 
-* false the function creates maximum spanning tree. 
-* NB: the tree is created from the original object. 
+/**
+* The function creates the minimum spanning tree by default
+* (if the argument is true), otherwise if the argument is
+* false the function creates maximum spanning tree.
+* NB: the tree is created from the original object.
 * The minimum spanning tree is constructed based on the edge length.
 */
 void RootGraph::getSpanningTree(bool minsp)
 {
 	multimap<float,int> q;
-	
-	__gnu_cxx::hash_set<int> vset;	
-	__gnu_cxx::hash_set<int>::iterator itset1;
-	__gnu_cxx::hash_set<int>::iterator itset2;	
+	stdext::hash_set<int> vset;
+	stdext::hash_set<int>::iterator itset1;
+	stdext::hash_set<int>::iterator itset2;
 	map<int,int>  spanv;
 	map<int,int>::iterator hit;
 	map<int,int>::iterator itv1;
@@ -72,7 +47,7 @@ void RootGraph::getSpanningTree(bool minsp)
 	int v1, v2;
 	set<int> edel;
 	set<int>::iterator eit;
-	map<int,pair<int,int> >::iterator e;
+	map<int,pair<int,int>>::iterator e;
 
 	map<int,float>::iterator it;
 	map<int, coord>::iterator vit;
@@ -89,8 +64,8 @@ void RootGraph::getSpanningTree(bool minsp)
 	//creat a set of vertices, they represent connceted components
 	for(vit=v_coord.begin(); vit!=v_coord.end(); vit++)
 		vset.insert(vit->first);
-	
-	pair<float,int> ep;	
+
+	pair<float,int> ep;
 	int cc = (int)vset.size();
 	int cid=1;
 	//while not all edges were considered or there are more than one connected components
@@ -109,7 +84,7 @@ void RootGraph::getSpanningTree(bool minsp)
 		e=E.find(ep.second);
 		v1=e->second.first;
 		v2=e->second.second;
-		
+
 		//try to find the id of the connected components of incident vertices v1 and v2
 		itset1=vset.find(v1);
 		if(itset1 == vset.end())
@@ -149,7 +124,7 @@ void RootGraph::getSpanningTree(bool minsp)
 			//if the second was not connected to anything, it joins the first
 			if(itset2!=vset.end())
 			{
-				spanv.insert(make_pair(v2,vc1));				
+				spanv.insert(make_pair(v2,vc1));
 				cc--;
 				vset.erase(v2);
 			}
@@ -164,7 +139,7 @@ void RootGraph::getSpanningTree(bool minsp)
 					//rename components
 					for(hit=spanv.begin(); hit!=spanv.end(); hit++)
 						if(hit->second==vc1)
-							hit->second=vc2;					
+							hit->second=vc2;
 				}
 			}
 
@@ -172,29 +147,29 @@ void RootGraph::getSpanningTree(bool minsp)
 	}
 	//remove edges in the list "to delete" from the graph
 	//maps to be updated:  E, v_inc, v_arc
-	for(eit=edel.begin(); eit!=edel.end(); eit++)	
+	for(eit=edel.begin(); eit!=edel.end(); eit++)
 		E.erase(*eit);
 	//update vertex incidence map
 	updateVertexIncidenceMap();
 }
 
 /**
-* Create a map between the edges of the graph and average root radius.  
-* The created map is used later together with construction of 
-* the max Spanning Tree to maximize the conductivity. Conductivity is 
-* proportional to R^2 where R is the acerage radius of the edge 
+* Create a map between the edges of the graph and average root radius.
+* The created map is used later together with construction of
+* the max Spanning Tree to maximize the conductivity. Conductivity is
+* proportional to R^2 where R is the acerage radius of the edge
 * (The average is computed over all voxels of the edge).
 */
-void RootGraph::createDistEdgeMap(map<int,float> &cond, __gnu_cxx::hash_map<int,float> &dmap)
+void RootGraph::createDistEdgeMap(map<int,float> &cond, hash_map<int,float> &dmap)
 {
-	map<int,pair<int,int> >::iterator e;
-	map<int,set<int> >::iterator ev;	
-	__gnu_cxx::hash_map<int,float>::iterator itmap;	
+	map<int,pair<int,int>>::iterator e;
+	map<int,set<int>>::iterator ev;
+	hash_map<int,float>::iterator itmap;
 	set<int>::iterator it;
-	int v;	
-	float avd;		
+	int v;
+	float avd;
 	int nv;
-	
+
 	for(e=E.begin(); e!=E.end();e++)
 	{
 		avd=0;
@@ -202,13 +177,13 @@ void RootGraph::createDistEdgeMap(map<int,float> &cond, __gnu_cxx::hash_map<int,
 		if(ev!=v_einc.end())
 			nv=ev->second.size();
 		else
-		{					
+		{
 			cond.insert(make_pair(e->first,avd));
 			continue;
 		}
 		for(it=ev->second.begin(); it!=ev->second.end(); it++)
 		{
-			v=*it;	
+			v=*it;
 			itmap=dmap.find(v);
 			if(itmap==dmap.end())
 				continue;
@@ -222,8 +197,8 @@ void RootGraph::createDistEdgeMap(map<int,float> &cond, __gnu_cxx::hash_map<int,
 
 void RootGraph::orientArcs()
 {
-	map<int, vector<int> >::iterator ait;
-	map<int, pair<int,int> >::iterator eit;
+	map<int, vector<int>>::iterator ait;
+	map<int, pair<int,int>>::iterator eit;
 	for(ait=arc_v.begin(); ait!=arc_v.end(); ait++)
 	{
 		eit=E.find(ait->first);
@@ -240,11 +215,11 @@ void RootGraph::orientArcs()
 
 void RootGraph::removeSelfLoops()
 {
-	map<int,pair<int,int> >::iterator e;
+	map<int,pair<int,int>>::iterator e;
 	set<int> edel;
 	set<int>::iterator edelit;
 	updateVertexIncidenceMap();
-	map<int,set<int> >::iterator incit;
+	map<int,set<int>>::iterator incit;
 
 	for(e=E.begin(); e!=E.end();e++)
 	{
@@ -262,7 +237,7 @@ void RootGraph::removeSelfLoops()
 			//remove the node and merge adjacent arcs
 			int e1=*incit->second.begin();
 			int e2=*(++incit->second.begin());
-			merge_edges(e1, e2);			
+			merge_edges(e1, e2);
 		}
 		E.erase(*edelit);
 		arc_v.erase(*edelit);
@@ -272,12 +247,12 @@ void RootGraph::removeSelfLoops()
 
 void RootGraph::merge_edges(int e1, int e2)
 {
-	map<int,pair<int,int> >::iterator eit1;
-	map<int,pair<int,int> >::iterator eit2;
-	map<int,vector<int> >::iterator va1;
-	map<int,vector<int> >::iterator va2;
+	map<int,pair<int,int>>::iterator eit1;
+	map<int,pair<int,int>>::iterator eit2;
+	map<int,vector<int>>::iterator va1;
+	map<int,vector<int>>::iterator va2;
 	map<int,float>::iterator el;
-	map<int,set<int> >::iterator vincit;
+	map<int,set<int>>::iterator vincit;
 
 	eit1=E.find(e1);
 	va1=arc_v.find(e1);
@@ -289,43 +264,43 @@ void RootGraph::merge_edges(int e1, int e2)
 	int v4=eit2->second.second;
 	int vn1, vn2;
 	bool res=false;
-	vector<int> newarc(0);		
-	
+	vector<int> newarc(0);
+
 	if(v1==v2 || v3==v4)
 		return;
 
 	if(v1==v3)
-	{	
-		newarc.insert(newarc.end(),va1->second.rbegin(),va1->second.rend());			
-		newarc.insert(newarc.end(),++va2->second.begin(),va2->second.end());					
+	{
+		newarc.insert(newarc.end(),va1->second.rbegin(),va1->second.rend());
+		newarc.insert(newarc.end(),++va2->second.begin(),va2->second.end());
 		res=true;
 	}
 	if(v1==v4)
-	{	
-		newarc.insert(newarc.end(),va1->second.rbegin(),va1->second.rend());			
-		newarc.insert(newarc.end(),++va2->second.rbegin(),va2->second.rend());					
+	{
+		newarc.insert(newarc.end(),va1->second.rbegin(),va1->second.rend());
+		newarc.insert(newarc.end(),++va2->second.rbegin(),va2->second.rend());
 		res=true;
 	}
 	if(v2==v3)
-	{	
-		newarc.insert(newarc.end(),va1->second.begin(),va1->second.end());			
-		newarc.insert(newarc.end(),++va2->second.begin(),va2->second.end());					
+	{
+		newarc.insert(newarc.end(),va1->second.begin(),va1->second.end());
+		newarc.insert(newarc.end(),++va2->second.begin(),va2->second.end());
 		res=true;
 	}
 	if(v2==v4)
-	{	
-		newarc.insert(newarc.end(),va1->second.begin(),va1->second.end());			
-		newarc.insert(newarc.end(),++va2->second.rbegin(),va2->second.rend());					
+	{
+		newarc.insert(newarc.end(),va1->second.begin(),va1->second.end());
+		newarc.insert(newarc.end(),++va2->second.rbegin(),va2->second.rend());
 		res=true;
-	}	
-	
+	}
+
 	vn1=newarc[0];
-	vn2=newarc[newarc.size()-1];	
+	vn2=newarc[newarc.size()-1];
 	eit1->second.first=vn1;
 	eit1->second.second=vn2;
 	va1->second.swap(newarc);
-			
-	E.erase(e2);	
+
+	E.erase(e2);
 	float l=getEdgeLength(eit1->first);
 	el=elength.find(e1);
 	if(el==elength.end())
@@ -348,19 +323,19 @@ void RootGraph::merge_edges(int e1, int e2)
 		vincit->second.insert(e1);
 }
 
-/** 
-* The function creates the minimum spanning tree by default 
-* (if the argument is true), otherwise if the argument is 
-* false the function creates maximum spanning tree. 
-* NB: the tree is created from the original object. 
+/**
+* The function creates the minimum spanning tree by default
+* (if the argument is true), otherwise if the argument is
+* false the function creates maximum spanning tree.
+* NB: the tree is created from the original object.
 * The minimum spanning tree is constructed based on the edge length.
 */
 void RootGraph::getSpanningTree(bool minsp, map<int,float> feature)
 {
 	multimap<float,int> q;
-	__gnu_cxx::hash_set<int> vset;
-	__gnu_cxx::hash_set<int>::iterator itset1;
-	__gnu_cxx::hash_set<int>::iterator itset2;	
+	stdext::hash_set<int> vset;
+	stdext::hash_set<int>::iterator itset1;
+	stdext::hash_set<int>::iterator itset2;
 	map<int,int>  spanv;
 	map<int,int>::iterator hit;
 	map<int,int>::iterator itv1;
@@ -369,14 +344,14 @@ void RootGraph::getSpanningTree(bool minsp, map<int,float> feature)
 	int v1, v2;
 	set<int> edel;
 	set<int>::iterator eit;
-	map<int,pair<int,int> >::iterator e;
+	map<int,pair<int,int>>::iterator e;
 	map<int,float>::iterator mapit;
 
 	map<int,float>::iterator it;
 	map<int, coord>::iterator vit;
 	//construct a map ordered by edge length
 	for(e=E.begin(); e!=E.end(); e++)
-	{		
+	{
 		//remove self-edge
 		if(e->second.first==e->second.second)
 			edel.insert(e->first);
@@ -395,8 +370,8 @@ void RootGraph::getSpanningTree(bool minsp, map<int,float> feature)
 	//creat a set of vertices, they represent connceted components
 	for(vit=v_coord.begin(); vit!=v_coord.end(); vit++)
 		vset.insert(vit->first);
-	
-	pair<float,int> ep;	
+
+	pair<float,int> ep;
 	int cc = (int)vset.size();
 	int cid=1;
 	//while not all edges were considered or there are more than one connected components
@@ -415,7 +390,7 @@ void RootGraph::getSpanningTree(bool minsp, map<int,float> feature)
 		e=E.find(ep.second);
 		v1=e->second.first;
 		v2=e->second.second;
-		
+
 		//try to find the id of the connected components of incident vertices v1 and v2
 		itset1=vset.find(v1);
 		if(itset1 == vset.end())
@@ -455,7 +430,7 @@ void RootGraph::getSpanningTree(bool minsp, map<int,float> feature)
 			//if the second was not connected to anything, it joins the first
 			if(itset2!=vset.end())
 			{
-				spanv.insert(make_pair(v2,vc1));				
+				spanv.insert(make_pair(v2,vc1));
 				cc--;
 				vset.erase(v2);
 			}
@@ -470,7 +445,7 @@ void RootGraph::getSpanningTree(bool minsp, map<int,float> feature)
 					//rename components
 					for(hit=spanv.begin(); hit!=spanv.end(); hit++)
 						if(hit->second==vc1)
-							hit->second=vc2;					
+							hit->second=vc2;
 				}
 			}
 
@@ -478,25 +453,25 @@ void RootGraph::getSpanningTree(bool minsp, map<int,float> feature)
 	}
 	//remove edges in the list "to delete" from the graph
 	//maps to be updated:  E, v_inc, v_arc
-	for(eit=edel.begin(); eit!=edel.end(); eit++)	
+	for(eit=edel.begin(); eit!=edel.end(); eit++)
 		E.erase(*eit);
 	//update vertex incidence map
 	updateVertexIncidenceMap();
 }
 
-/** 
-* This function creates the map v_einc between 
+/**
+* This function creates the map v_einc between
 * vertex indices and a set of id-s of the incidend edges
 */
 void RootGraph::updateVertexIncidenceMap()
 {
-	map<int,pair<int,int> >::iterator eit; 
-	map<int,set<int> >::iterator vincit;
+	map<int,pair<int,int>>::iterator eit;
+	map<int,set<int>>::iterator vincit;
 	v_einc.clear();
 	int v1, v2;
 	//iterate through edges
 	for(eit=E.begin(); eit!=E.end(); eit++)
-	{		
+	{
 		v1=eit->second.first;
 		v2=eit->second.second;
 
@@ -523,13 +498,13 @@ void RootGraph::updateVertexIncidenceMap()
 	}
 }
 
-/** 
+/**
 * returns the id of the node with the smallest y-value + it should be bif node
 */
 int RootGraph::getHighestNode()
 {
 	map<int, coord>::iterator it;
-	map<int, set<int> >::iterator itinc;
+	map<int, set<int>>::iterator itinc;
 	float ymin = FLT_MAX;
 	int vid=0;
 	for(it=v_coord.begin(); it!=v_coord.end(); it++)
@@ -548,13 +523,13 @@ int RootGraph::getHighestNode()
 	return vid;
 }
 
-/** 
+/**
 * returns the id of the node with the biggest y-value + it should be bif node
 */
 int RootGraph::getLowestNode()
 {
 	map<int, coord>::iterator it;
-	map<int, set<int> >::iterator itinc;
+	map<int, set<int>>::iterator itinc;
 	float ymax = -FLT_MAX;
 	int vid=0;
 	for(it=v_coord.begin(); it!=v_coord.end(); it++)
@@ -572,10 +547,10 @@ int RootGraph::getLowestNode()
 	}
 	return vid;
 }
-/** 
-* find Horton ordering of the network: 
+/**
+* find Horton ordering of the network:
 * assign values the order to each edge in the graph;
-* the values are store in e_order map; 
+* the values are store in e_order map;
 */
 void RootGraph::HortonOrder()
 {
@@ -585,7 +560,7 @@ void RootGraph::HortonOrder()
 
 	vector<bool> visited(vnum);
 	vector<int> vo(vnum);
-	vector<vector<int> > ve(vnum);
+	vector<vector<int>> ve(vnum);
 	for(int i=0; i<vnum; i++)
 		ve[i].resize(vnum);
 	for(int i=0; i<vnum; i++)
@@ -594,9 +569,9 @@ void RootGraph::HortonOrder()
 
 	//recursive procedure to find Horton order stored in the matrix vo
 	findHortonOrder(visited,vtop,vo,ve);
-	
+
 	//transfer edge order from matrix representation to the map e_order
-	map<int,pair<int,int> >::iterator eit;
+	map<int,pair<int,int>>::iterator eit;
 	int v1, v2;
 	for(eit=E.begin(); eit!=E.end(); eit++)
 	{
@@ -608,14 +583,14 @@ void RootGraph::HortonOrder()
 	}
 }
 
-/** 
-* This is a recursice procedure to find the Horton order of an edge based on its dauter edges. 
-* The Horton order of pendant edges is 1. If the edges of different orders meet at a bifurcation point, 
-* the new successive edge will have an order of max of the incoming edges. 
-* If edges of the same order meet at the biffurcation point, 
+/**
+* This is a recursice procedure to find the Horton order of an edge based on its dauter edges.
+* The Horton order of pendant edges is 1. If the edges of different orders meet at a bifurcation point,
+* the new successive edge will have an order of max of the incoming edges.
+* If edges of the same order meet at the biffurcation point,
 * the order of the new successive edge will encrease by 1.
 */
-int RootGraph::findHortonOrder(vector<bool> &visited,int vid, vector<int> &vo, vector<vector<int> > &eo)
+int RootGraph::findHortonOrder(vector<bool> &visited,int vid, vector<int> &vo, vector<vector<int>> &eo)
 {
 	int cur_order;
 	set<int> vset;
@@ -636,24 +611,24 @@ int RootGraph::findHortonOrder(vector<bool> &visited,int vid, vector<int> &vo, v
 			//assign order to the edge based on the order of the incident vertex
 			if (d_order>0)
 			{
-				eo[vid][*vit]=d_order; 
-				eo[*vit][vid]=d_order; 
+				eo[vid][*vit]=d_order;
+				eo[*vit][vid]=d_order;
 			}
 			//current order is the maximum order of the incident vertices
 			if (d_order>cur_order)
-				cur_order=d_order;			
+				cur_order=d_order;
 			else
 				// if there are several incident vertices of the same order count their number
 				if (cur_order==d_order)
-					n_eq_o++;					
+					n_eq_o++;
 		}
-		// if the number of incident non-visited vertices is  equal 
-		// to the number of the vertices of the same order, 
+		// if the number of incident non-visited vertices is  equal
+		// to the number of the vertices of the same order,
 		// the current order should be increased by 1
 		if(vset.size()-1==n_eq_o+1 && cur_order!=0 && vset.size()>2)
 			cur_order=cur_order+1;
 		cur_order=max(1,cur_order);
-		vo[vid]=cur_order;    
+		vo[vid]=cur_order;
 	}
 	else
 	{
@@ -662,14 +637,14 @@ int RootGraph::findHortonOrder(vector<bool> &visited,int vid, vector<int> &vo, v
 	return cur_order;
 }
 
-/** 
+/**
 * returns a set of the incident vertices to a given vertex with id vid
 */
 void RootGraph::getIncidentVertices(set<int> &vset,int vid)
 {
 	vset.clear();
-	map<int,pair<int,int> >::iterator eit;
-	map<int, set<int> >::iterator it;
+	map<int,pair<int,int>>::iterator eit;
+	map<int, set<int>>::iterator it;
 	set<int>::iterator itset;
 	it=v_einc.find(vid);
 	for(itset=it->second.begin(); itset!=it->second.end(); itset++)
@@ -682,7 +657,7 @@ void RootGraph::getIncidentVertices(set<int> &vset,int vid)
 	}
 }
 
-/** 
+/**
 * get the maximum edge order in the network
 */
 int RootGraph::getMaxHortonOrder()
@@ -694,30 +669,30 @@ int RootGraph::getMaxHortonOrder()
 	return maxOrder;
 }
 
-/** 
-* This function creates an IV output file with the colored network. 
-* If the order is assigned to edges, the edges will be colored using heatmap colors 
+/**
+* This function creates an IV output file with the colored network.
+* If the order is assigned to edges, the edges will be colored using heatmap colors
 * from blue (low values) to red (high values).
-* The output will be written to the file filename.iv which is viewable with ivview.exe viewer 
+* The output will be written to the file filename.iv which is viewable with ivview.exe viewer
 * or any OpenInventor viewer. This format can be easily converted to VRML format as well.
-* The arguments are: filename -  the name of the output file; 
-* xs,ys,zs - width, hight, and depth of the model volume. 
+* The arguments are: filename -  the name of the output file;
+* xs,ys,zs - width, hight, and depth of the model volume.
 * These values are used to convert linear indices to coordinates.
 */
 void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 {
 	//first find the maximum order in the network
 	int maxOrder=getMaxHortonOrder();
-	
+
 
 	float x,y,z;
-	map<int,pair<int,vector<float> > > vinds;
+	map<int,pair<int,vector<float>>> vinds;
 	//create the map of old to new vertex indices
 	map<int,int> old_new;
-	map<int,pair<int,vector<float> > >::iterator indit;
+	map<int,pair<int,vector<float>>>::iterator indit;
 	//create the map of new vertex indices + their coordinates
 	map<int, coord>::iterator vit;
-	map<int, pair<int,int> >::iterator eit;
+	map<int, pair<int,int>>::iterator eit;
 	int curi=0;
 	// collect only verticies incident to edges
 	for(eit=E.begin(); eit!=E.end(); eit++)
@@ -746,11 +721,11 @@ void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 			vinds.insert(make_pair(curi,make_pair(vit->first,coord)));
 			old_new.insert(make_pair(vit->first,curi));
 			curi++;
-		}		
+		}
 	}
 	//now add vertices of the arcs of the edges
-	map<int,vector<int> >::iterator evit;
-	for(eit=E.begin(); eit!=E.end(); eit++)	
+	map<int,vector<int>>::iterator evit;
+	for(eit=E.begin(); eit!=E.end(); eit++)
 	{
 		evit=arc_v.find(eit->first);
 		if(evit==arc_v.end()) continue;
@@ -775,20 +750,20 @@ void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 	fileout=fileout+"_nw.iv";
 
 	// create the table of colors based on the available order of the network
-	vector<vector<float> > colors(maxOrder);
+	vector<vector<float>> colors(maxOrder);
 	for(int i=0; i<maxOrder; i++)
 	{
 		colors[i].resize(3);
 		getRGBcolor4Interals(((float)(i+1)/(float)maxOrder),colors[i][0],colors[i][1], colors[i][2]);
-	}	
-	
+	}
+
 	FILE *f = fopen(fileout.c_str(),"w");
-	fprintf(f, "#Inventor V2.1 ascii\n Separator {\n");	
+	fprintf(f, "#Inventor V2.1 ascii\n Separator {\n");
 	fprintf(f, "LightModel { \n model PHONG \n}");
 	fprintf(f, "MaterialBinding { \n value PER_VERTEX_INDEXED \n}");
 
-   
- 
+
+
 	fprintf(f, "Coordinate3 { \n point [\n");
 	for(indit=vinds.begin(); indit!=vinds.end(); indit++)
 		fprintf(f, " %.2f %.2f %.2f,\n", indit->second.second[0], indit->second.second[1], indit->second.second[2]);
@@ -799,7 +774,7 @@ void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 		fprintf(f, " %.2f %.2f %.2f,\n ", colors[i][0], colors[i][1], colors[i][2]);
 	fprintf(f, "]\n }\n");
 	fprintf(f, "IndexedLineSet { \ncoordIndex [\n");
-	
+
 	map<int,int>::iterator mit;
 	map<int,int>::iterator mito;
 	int vnew;
@@ -815,10 +790,10 @@ void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 		if(mito==e_order.end())
 			no=0;
 		else
-			no=mito->second-1;	
+			no=mito->second-1;
 
 		int n=evit->second.size();
-		if(n<=1) continue;			
+		if(n<=1) continue;
 		int v0=eit->second.first;
 		mit=old_new.find(v0);
 		if(mit==old_new.end())
@@ -837,7 +812,7 @@ void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 				printf("Debug:something is wrong - intermediate vertices!!!");
 				continue;
 			}
-			vnew=mit->second;			
+			vnew=mit->second;
 			fprintf(f, " %i, ", vnew);
 			cind.push_back(no);
 		}
@@ -856,14 +831,14 @@ void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 	}
 	fprintf(f, "]\n ");
 
-	
+
 	fprintf(f, "\nmaterialIndex [\n");
-	for(int i=0; i<(int)cind.size(); i++)	
-		fprintf(f, " %i, ", cind[i]);		
+	for(int i=0; i<(int)cind.size(); i++)
+		fprintf(f, " %i, ", cind[i]);
 	fprintf(f, "]\n }\n");
 
 	fprintf(f, "}\n");
-	fclose(f);	
+	fclose(f);
 }
 
 
@@ -873,11 +848,11 @@ void RootGraph::writeHortonNetworkToIV(string filename, int xs, int ys, int zs)
 *this function is for visualization of the graph with correctly located edge-arcs
 */
 void RootGraph::outputFullGraphToIV(string filename)
-{	
+{
 	map<int, coord>::iterator vit;
-	map<int, pair<int,int> >::iterator eit;
-	map<int, vector<int> >::iterator eait;
-	vector<int>::iterator ait;	
+	map<int, pair<int,int>>::iterator eit;
+	map<int, vector<int>>::iterator eait;
+	vector<int>::iterator ait;
 	vector<int> e_inds(0);
 	set<int> nlist;
 	set<int>::iterator sit;
@@ -896,7 +871,7 @@ void RootGraph::outputFullGraphToIV(string filename)
 		{
 			inds.insert(make_pair(vit->first,id));
 			id++;
-		}				
+		}
 	}
 
 	for(eit=E.begin(); eit!=E.end(); eit++)
@@ -907,16 +882,16 @@ void RootGraph::outputFullGraphToIV(string filename)
 		for(vector<int>::iterator vit=eait->second.begin(); vit!=eait->second.end(); vit++)
 		{
 			indit=inds.find(*vit);
-			e_inds.insert(e_inds.end(), indit->second);			
-		}			
+			e_inds.insert(e_inds.end(), indit->second);
+		}
 		e_inds.insert(e_inds.end(),-1);
-	}			
+	}
 ////////////////////////
 	FILE *f = fopen(filename.c_str(),"w");
-	fprintf(f, "#VRML V2.0 utf8\n");	 
-	fprintf(f, "Transform {\n\t children [\n");	 
+	fprintf(f, "#VRML V2.0 utf8\n");
+	fprintf(f, "Transform {\n\t children [\n");
 
-	//first node	 
+	//first node
 	mit=v_coord.find(*sit);
 	if(mit==v_coord.end())
 	{
@@ -924,20 +899,20 @@ void RootGraph::outputFullGraphToIV(string filename)
 		fclose(f);
 		return;
 	}
-	fprintf(f, "Transform {\n");	
-	fprintf(f, "\t translation %.3f %.3f %.3f\n", mit->second.x, mit->second.y, mit->second.z);	 
-	fprintf(f, "\t children   DEF Joe Shape { geometry Sphere { radius .7 } }\n");	 
+	fprintf(f, "Transform {\n");
+	fprintf(f, "\t translation %.3f %.3f %.3f\n", mit->second.x, mit->second.y, mit->second.z);
+	fprintf(f, "\t children   DEF Joe Shape { geometry Sphere { radius .7 } }\n");
 	fprintf(f, "}\n");
 	sit++;
-	  
+
 	for(;sit!=nlist.end(); sit++)
 	{
 		mit=v_coord.find(*sit);
 		if(mit==v_coord.end())
 			continue;
-		fprintf(f, "Transform {\n");	
-		fprintf(f, "\t translation %.3f %.3f %.3f\n", mit->second.x, mit->second.y, mit->second.z);	 
-		fprintf(f, "\t children USE Joe\n");	 
+		fprintf(f, "Transform {\n");
+		fprintf(f, "\t translation %.3f %.3f %.3f\n", mit->second.x, mit->second.y, mit->second.z);
+		fprintf(f, "\t children USE Joe\n");
 		fprintf(f, "}\n");
 	}
 	fprintf(f, "]\n}\n\n ");
@@ -954,16 +929,16 @@ void RootGraph::outputFullGraphToIV(string filename)
 		fprintf(f, " %i, ", *ait);
 	fprintf(f, "]\n}\n ");
 
-	fclose(f);	
+	fclose(f);
 
 	////////////////////////////////
 	/*FILE *f = fopen(filename.c_str(),"w");
-	fprintf(f, "#Inventor V2.1 ascii\n Separator {\n");	 
+	fprintf(f, "#Inventor V2.1 ascii\n Separator {\n");
 	fprintf(f, "Coordinate3 { \n point [\n");
 	for(vit=v_coord.begin(); vit!=v_coord.end(); vit++)
 		fprintf(f, " %.2f %.2f %.2f,\n", vit->second.x, vit->second.y, vit->second.z);
 	fprintf(f, "]\n }\n");
-	
+
 	fprintf(f, "IndexedLineSet { \ncoordIndex [\n");
 	for(ait=e_inds.begin(); ait!=e_inds.end(); ait++)
 		fprintf(f, " %i, ", *ait);
@@ -978,11 +953,11 @@ void RootGraph::outputFullGraphToIV(string filename)
 */
 void RootGraph::graph_adjacency_output(string filename)
 {
-	
-	__gnu_cxx::hash_map<int,int> indexmap;
-	__gnu_cxx::hash_map<int,int>::iterator it;
-	pair< __gnu_cxx::hash_map<int,int>::iterator, bool > res;
-	map<int,pair<int,int> >::iterator eit;
+
+	hash_map<int,int> indexmap;
+	hash_map<int,int>::iterator it;
+	pair< hash_map<int,int>::iterator, bool > res;
+	map<int,pair<int,int>>::iterator eit;
 	int ind=0;
 	for(eit=E.begin(); eit!=E.end(); eit++)
 	{
@@ -1001,7 +976,7 @@ void RootGraph::graph_adjacency_output(string filename)
 	}
 	int n=indexmap.size();
 
-	vector<vector<bool> > adj(n);
+	vector<vector<bool>> adj(n);
 	for(int i=0; i<n; i++)
 		adj[i].resize(n);
 
@@ -1023,7 +998,7 @@ void RootGraph::graph_adjacency_output(string filename)
 		//if(v1==v2)
 			//printf("Self edge for the node %d\n.", v1);
 		adj[v1][v2]=1;
-		adj[v2][v1]=1;	
+		adj[v2][v1]=1;
 	}
 
 	FILE * f = fopen(filename.c_str(), "w");
@@ -1033,14 +1008,14 @@ void RootGraph::graph_adjacency_output(string filename)
 	{
 		for(int j=0; j<n; j++)
 			fprintf(f, "%s ", (adj[i][j])?"1":"0");
-			
+
 		/*if(adj[i][j]==1)
 				fprintf(f," 1 ");
 			else
 				fprintf(f," 0 ");*/
 		fprintf(f,"\n");
 	}
-	
+
 	fclose(f);
 }
 
@@ -1048,11 +1023,11 @@ void RootGraph::graph_adjacency_output(string filename)
 /*
 * returns the adjacency matrix
 */
-//void RootGraph::get_adjacency(vector<vector<float> > &a, map<int,int> &indexmap)
-//{		
+//void RootGraph::get_adjacency(vector<vector<float>> &a, map<int,int> &indexmap)
+//{
 //	map<int,int>::iterator it;
-//	pair< __gnu_cxx::hash_map<int,int>::iterator, bool > res;
-//	map<int,pair<int,int> >::iterator eit;
+//	pair< hash_map<int,int>::iterator, bool > res;
+//	map<int,pair<int,int>>::iterator eit;
 //	int ind=0;
 //	for(eit=E.begin(); eit!=E.end(); eit++)
 //	{
@@ -1097,19 +1072,19 @@ void RootGraph::graph_adjacency_output(string filename)
 //		if(elenit==elength.end())
 //			continue;
 //		a[v1][v2]=elenit->second;
-//		a[v2][v1]=elenit->second;	
-//	}	
+//		a[v2][v1]=elenit->second;
+//	}
 //}
 
 //void RootGraph::graph_edge_description_output(string filename)
-//{	
+//{
 //	//map of current indices to new indices [0,n]
 //	map<int,int> inds;
-//	map<int,int>::iterator indit;	
+//	map<int,int>::iterator indit;
 //	int id=0;
-//	
+//
 //	map<int, float>::iterator elen;
-//	map<int, pair<int,int> >::iterator eit;
+//	map<int, pair<int,int>>::iterator eit;
 //	int id1, id2;
 //	int ne=E.size();
 //	vector<int> v1(ne);
@@ -1118,7 +1093,7 @@ void RootGraph::graph_adjacency_output(string filename)
 //	int i;
 //
 //	for(eit=E.begin(), i=0; eit!=E.end(); eit++, i++)
-//	{	
+//	{
 //		if(inds.find(eit->second.first)==inds.end())
 //		{
 //			inds.insert(make_pair(eit->second.first,id));
@@ -1142,8 +1117,8 @@ void RootGraph::graph_adjacency_output(string filename)
 //		v2[i]=id1;
 //		len[i]=elen->second;
 //	}
-//	
-//	FILE * f = fopen(filename.c_str(), "w");	
+//
+//	FILE * f = fopen(filename.c_str(), "w");
 //	for(indit=inds.begin(); indit!=inds.end(); indit++)
 //		fprintf(f, "%d %d\n", indit->first, indit->second);
 //
@@ -1159,10 +1134,10 @@ void RootGraph::graph_adjacency_output(string filename)
 //}
 
 
-void RootGraph::graph_description_output(string filename, map<int,vector<float> > &descr)
+void RootGraph::graph_description_output(string filename, map<int,vector<float>> &descr)
 {
-	map<int,vector<float> >::iterator dit;
-	vector<float>::iterator vit;	
+	map<int,vector<float>>::iterator dit;
+	vector<float>::iterator vit;
 
 	//map of current indices to new indices [0,n]
 	map<int,int> inds;
@@ -1176,7 +1151,7 @@ void RootGraph::graph_description_output(string filename, map<int,vector<float> 
 	}
 
 	FILE * f = fopen(filename.c_str(), "w");
-	
+
 	fprintf(f, "%d\n",descr.size());
 	fprintf(f, "%d\n",descr.begin()->second.size());
 	for(dit=descr.begin(); dit!=descr.end(); dit++)
@@ -1189,13 +1164,13 @@ void RootGraph::graph_description_output(string filename, map<int,vector<float> 
 	}
 	fprintf(f, "\n");
 	map<int, float>::iterator elen;
-	map<int, pair<int,int> >::iterator eit;
+	map<int, pair<int,int>>::iterator eit;
 	int id1, id2;
 
 	for(eit=E.begin(); eit!=E.end(); eit++)
 	{
 		if(descr.find(eit->second.first)==descr.end())
-			continue;		
+			continue;
 		if(descr.find(eit->second.second)==descr.end())
 			continue;
 		elen=elength.find(eit->first);
@@ -1206,27 +1181,27 @@ void RootGraph::graph_description_output(string filename, map<int,vector<float> 
 		indit=inds.find(eit->second.second);
 		id2=indit->second;
 		fprintf(f, "%d %d %.3f\n", id1, id2, elen->second);
-	}	
+	}
 	fclose(f);
 }
 
 /**
 *
-* This function with smooth the edges of the graph 
-* by moving each of the intermediate nodes to a new 
+* This function with smooth the edges of the graph
+* by moving each of the intermediate nodes to a new
 * position defined by the average of the neighbors.
 */
 void RootGraph::smoothEdges(int iter)
 {
 	map<int, coord> sm_arc;
-	map<int,pair<int,int> >::iterator eit;
-	map<int, vector<int> >::iterator ea_it; 
+	map<int,pair<int,int>>::iterator eit;
+	map<int, vector<int>>::iterator ea_it;
 	map<int, coord>::iterator cit;
 	float tx1, ty1, tz1;
 	float tx2, ty2, tz2;
 	map<int,coord>::iterator tcit;
 
-	//map<int, vector<int> > arc_v; //map between edges and sequence of voxels
+	//map<int, vector<int>> arc_v; //map between edges and sequence of voxels
 	for(eit=E.begin(); eit!=E.end(); eit++)
 	{
 		if(eit->second.first==eit->second.second)
@@ -1247,7 +1222,7 @@ void RootGraph::smoothEdges(int iter)
 			cit=v_coord.find(ea_it->second[i+1]);
 			tx2=cit->second.x;
 			ty2=cit->second.y;
-			tz2=cit->second.z;			
+			tz2=cit->second.z;
 			c.x=(tx1+tx2)/2;
 			c.y=(ty1+ty2)/2;
 			c.z=(tz1+tz2)/2;
@@ -1258,12 +1233,12 @@ void RootGraph::smoothEdges(int iter)
 	for(cit=v_coord.begin(); cit!=v_coord.end(); cit++)
 		sm_arc.insert(make_pair(cit->first,cit->second));
 
-	map<int,coord> prev_map;		
+	map<int,coord> prev_map;
 	prev_map.swap(sm_arc);
-	
+
 	for(int j=2; j<=iter; j++)
-	{		
-		
+	{
+
 		for(eit=E.begin(); eit!=E.end(); eit++)
 		{
 			if(eit->second.first==eit->second.second)
@@ -1290,7 +1265,7 @@ void RootGraph::smoothEdges(int iter)
 
 		for(tcit=sm_arc.begin(); tcit!=sm_arc.end(); tcit++)
 		{
-			cit=prev_map.find(tcit->first);			
+			cit=prev_map.find(tcit->first);
 			cit->second=tcit->second;
 		}
 		sm_arc.clear();
@@ -1309,8 +1284,8 @@ void RootGraph::smoothEdges(int iter)
 float RootGraph::getEdgeLength(int eid)
 {
 	// if map of smoothed edges is empty than take original coordinates
-	map<int,vector<int> >::iterator ea_it;
-	map<int,pair<int,int> >::iterator eit;
+	map<int,vector<int>>::iterator ea_it;
+	map<int,pair<int,int>>::iterator eit;
 	map<int, coord>::iterator vit;
 	float tx1, ty1, tz1;
 	float tx2, ty2, tz2;
@@ -1357,9 +1332,9 @@ float RootGraph::getEdgeLength(int eid)
 }
 /**
 *
-This function computes radial geodesic shape descriptors for each bifurcation node. 
-The descriptor represent the distribution of the geodesic distance around the node 
-included in the sperical neighborhood. the maximum value of the sperical 
+This function computes radial geodesic shape descriptors for each bifurcation node.
+The descriptor represent the distribution of the geodesic distance around the node
+included in the sperical neighborhood. the maximum value of the sperical
 neighborhood as well as the number of bins is given,
 
     *
@@ -1368,28 +1343,28 @@ neighborhood as well as the number of bins is given,
   *  \*
     *
 */
-void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr, float maxval, int nbin)
+void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float>> &descr, float maxval, int nbin)
 {
 	set<int> blist;
 	set<int>::iterator it;
 
 	get_bif_node_list(blist);
-	
+
 	set<int> nb;
 	set<int>::iterator nbit;
-		
-	map<int, set<int> >::iterator incit;
-	map<int,pair<int,int> >::iterator eit;
-	map<int, vector<int> >::iterator arc;
+
+	map<int, set<int>>::iterator incit;
+	map<int,pair<int,int>>::iterator eit;
+	map<int, vector<int>>::iterator arc;
 	map<int,coord>::iterator vcoord;
 	set<int>::iterator sit;
-	
+
 	float tx,ty,tz;
 	float x,y,z;
 	int prevbin;
 	float prevx,prevy,prevz;
-	vector<float> descr_loc(nbin);	
-	float step=maxval/(float)nbin;	
+	vector<float> descr_loc(nbin);
+	float step=maxval/(float)nbin;
 	set<int> e_visited;
 	float len_r;
 	float len;
@@ -1401,10 +1376,10 @@ void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr
 
 	//update edge length map
 	updateEdgeLengthMap();
-	
+
 	for(it=blist.begin(); it!=blist.end(); it++)
-	{	
-		//printf("%d\n",*it);		
+	{
+		//printf("%d\n",*it);
 	/*	if(*it==42)
 			printf("Debug stop\n");*/
 
@@ -1417,13 +1392,13 @@ void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr
 		incit=v_einc.find(*it);
 		nb.insert(incit->second.begin(), incit->second.end());
 		e_visited.clear();
-		
+
 		while(!nb.empty())
 		{
 			//pick an edge from the list of adjacent edges
-			//walk along the edge and compute geodesic distance 
-			//contribution to different bins until a voxel in 
-			//the edge is outside the max bin radius		
+			//walk along the edge and compute geodesic distance
+			//contribution to different bins until a voxel in
+			//the edge is outside the max bin radius
 			eid=*nb.begin();
 			/*if(*nb.begin()==49)
 				printf("Debug stop\n");*/
@@ -1445,9 +1420,9 @@ void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr
 				prevx=x1;
 				prevy=y1;
 				prevz=z1;
-				istart=0; 
+				istart=0;
 				ifin=(int)arc->second.size()-1;
-				idelta=1;	
+				idelta=1;
 				coef=1;
 			}
 			else
@@ -1457,13 +1432,13 @@ void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr
 				prevz=z2;
 				istart=(int)arc->second.size()-1;
 				ifin=0;
-				idelta=-1;	
+				idelta=-1;
 				coef=-1;
 			}
-			len_r=eucl_dist(x,y,z,prevx,prevy,prevz);			
+			len_r=eucl_dist(x,y,z,prevx,prevy,prevz);
 			if(len_r>maxval)
 				continue;
-			prevbin= (int)floor(len_r/step);				
+			prevbin= (int)floor(len_r/step);
 
 			for(int i=istart+idelta; i*coef<=coef*ifin; i=i+idelta)
 			{
@@ -1479,7 +1454,7 @@ void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr
 					descr_loc[prevbin] = descr_loc[prevbin] + 0.5*len;
 					break;
 				}
-				int bini = (int)floor(len_r/step);								
+				int bini = (int)floor(len_r/step);
 				if(bini==prevbin)
 					descr_loc[bini] = descr_loc[bini] + len;
 				else
@@ -1494,13 +1469,13 @@ void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr
 				continue;
 			//add all incident edges into nb list if not visited;
 			eit=E.find(eid);
-			incit=v_einc.find(eit->second.first);		
+			incit=v_einc.find(eit->second.first);
 			for(sit=incit->second.begin(); sit!=incit->second.end(); sit++)
 			{
 				if(e_visited.find(*sit)==e_visited.end())
 					nb.insert(*sit);
 			}
-			incit=v_einc.find(eit->second.second);		
+			incit=v_einc.find(eit->second.second);
 			for(sit=incit->second.begin(); sit!=incit->second.end(); sit++)
 			{
 				if(e_visited.find(*sit)==e_visited.end())
@@ -1518,7 +1493,7 @@ void RootGraph::radial_geod_distr_per_bifurcation(map<int,vector<float> > &descr
 void RootGraph::updateEdgeLengthMap()
 {
 	elength.clear();
-	map<int,pair<int,int> >::iterator eit;
+	map<int,pair<int,int>>::iterator eit;
 	for(eit=E.begin(); eit!=E.end(); eit++)
 	{
 		float len = getEdgeLength(eit->first);
@@ -1532,9 +1507,9 @@ void RootGraph::updateEdgeLengthMap()
 This function collects all bifurcation nodes in the list blist
 */
 void RootGraph::get_bif_node_list(set<int> &blist)
-{	
+{
 	updateVertexIncidenceMap();
-	map<int,set<int> >::iterator it;
+	map<int,set<int>>::iterator it;
 	for(it=v_einc.begin(); it!=v_einc.end(); it++)
 		if(it->second.size()>2)
 			blist.insert(it->first);
@@ -1545,10 +1520,10 @@ void RootGraph::get_bif_node_list(set<int> &blist)
 This function collects all bifurcation nodes in the list blist
 */
 void RootGraph::get_node_list(set<int> &nlist)
-{	
+{
 	nlist.clear();
 	updateVertexIncidenceMap();
-	map<int,set<int> >::iterator it;
+	map<int,set<int>>::iterator it;
 	for(it=v_einc.begin(); it!=v_einc.end(); it++)
 		if(it->second.size()==1 || it->second.size()>2)
 			nlist.insert(it->first);
@@ -1559,10 +1534,10 @@ void RootGraph::get_node_list(set<int> &nlist)
 This function returns the number of nodes in the graph: bif nodes and tips
 */
 int RootGraph::get_node_number()
-{	
+{
 	int n=0;
 	updateVertexIncidenceMap();
-	map<int,set<int> >::iterator it;
+	map<int,set<int>>::iterator it;
 	for(it=v_einc.begin(); it!=v_einc.end(); it++)
 		if(it->second.size()==1 || it->second.size()>2)
 			n++;
@@ -1570,18 +1545,18 @@ int RootGraph::get_node_number()
 }
 
 /**
-* This function constructs the map between the edes 
-* and the list of incident edges. The curvature 
-* (angle between the edges) is stored together 
+* This function constructs the map between the edes
+* and the list of incident edges. The curvature
+* (angle between the edges) is stored together
 * with each incident edge
 */
-void RootGraph::curveEdgeMap(map<int,multimap<float,int> > &eemap)
+void RootGraph::curveEdgeMap(map<int,multimap<float,int>> &eemap)
 {
-	map<int,pair<int,int> >::iterator eit;
+	map<int,pair<int,int>>::iterator eit;
 	set<int> einc;
 	set<int>::iterator eit2;
 	int v1,v2;
-	map<int,set<int> >::iterator vincit;
+	map<int,set<int>>::iterator vincit;
 	float a;
 	multimap<float,int> emap;
 	updateVertexIncidenceMap();
@@ -1589,7 +1564,7 @@ void RootGraph::curveEdgeMap(map<int,multimap<float,int> > &eemap)
 	for(eit=E.begin(); eit!=E.end(); eit++)
 	{
 		einc.clear();
-		v1=eit->second.first;		
+		v1=eit->second.first;
 		vincit=v_einc.find(v1);
 		if(vincit!=v_einc.end())
 			einc.insert(vincit->second.begin(), vincit->second.end());
@@ -1604,7 +1579,7 @@ void RootGraph::curveEdgeMap(map<int,multimap<float,int> > &eemap)
 			a=getAngle(eit->first, *eit2);
 			if(a==1000) continue;
 			a=(float)abs(a-M_PI);
-			emap.insert(make_pair(a,*eit2));				
+			emap.insert(make_pair(a,*eit2));
 		}
 		if(!emap.empty())
 			eemap.insert(make_pair(eit->first,emap));
@@ -1612,16 +1587,16 @@ void RootGraph::curveEdgeMap(map<int,multimap<float,int> > &eemap)
 }
 
 /**
-Computes an angle between two edges. The function 
-assumes that the wo edges share a vertex 
-(the angle at which is computed). 
+Computes an angle between two edges. The function
+assumes that the wo edges share a vertex
+(the angle at which is computed).
 If not so, it returns the value of 1000.
 */
 float RootGraph::getAngle(int e1, int e2)
 {
 	float a=1000;
-	map<int,pair<int,int> >::iterator eit1;
-	map<int,pair<int,int> >::iterator eit2;
+	map<int,pair<int,int>>::iterator eit1;
+	map<int,pair<int,int>>::iterator eit2;
 	map<int, coord>::iterator vit;
 	eit1=E.find(e1);
 	if(eit1==E.end()) return a;
@@ -1635,7 +1610,7 @@ float RootGraph::getAngle(int e1, int e2)
 	v21=eit2->second.first;
 	v22=eit2->second.second;
 	//try to find a common vertex
-	getEndVertices(e1,e2,v1,v2,vc);	
+	getEndVertices(e1,e2,v1,v2,vc);
 	if(vc==-1) return a;
 	float x1,x2,y1,y2,z1,z2,xc,yc,zc;
 	//vector coordinates
@@ -1656,20 +1631,20 @@ float RootGraph::getAngle(int e1, int e2)
 	return a;
 }
 /**
-* this finction returns distinct vertices of the edges v1 and v2 
-* as well as the shared vertex vc. If the edges do not share a vertex, 
+* this finction returns distinct vertices of the edges v1 and v2
+* as well as the shared vertex vc. If the edges do not share a vertex,
 * the value -1 is assigned to v1, v2, and vc.
 */
 void RootGraph::getEndVertices(int e1, int e2, int &v1, int &v2, int &vc)
-{	
+{
 	v1=-1; v2=-1;
-	map<int,pair<int,int> >::iterator eit1;
-	map<int,pair<int,int> >::iterator eit2;
+	map<int,pair<int,int>>::iterator eit1;
+	map<int,pair<int,int>>::iterator eit2;
 	eit1=E.find(e1);
 	if(eit1==E.end()) return;
 	eit2=E.find(e2);
 	if(eit2==E.end()) return;
-	
+
 	int v11,v12,v21,v22;
 	v11=eit1->second.first;
 	v12=eit1->second.second;
@@ -1677,60 +1652,60 @@ void RootGraph::getEndVertices(int e1, int e2, int &v1, int &v2, int &vc)
 	v22=eit2->second.second;
 	//try to find a common vertex
 	if(v11==v21)
-	{	
+	{
 		vc=v11;
 		v1=v12;
 		v2=v22;
 		return;
 	}
 	if(v12==v21)
-	{	
-		vc=v12;	
+	{
+		vc=v12;
 		v1=v11;
 		v2=v22;
 		return;
 	}
 	if(v11==v22)
-	{	
+	{
 		vc=v11;
 		v1=v12;
 		v2=v21;
 		return;
 	}
 	if(v12==v22)
-	{	
+	{
 		vc=v12;
 		v1=v11;
 		v2=v21;
 		return;
 	}
 }
-	
+
 /**
 * This function constructs the minimum spamming tree in breadth-first search manner.
-* The process starts by choosing an initial edge (here longest edge). 
-* All incident edges go to the queue and an incident edge which 
-* forms the smallest angle with the current edge is chosen to be 
-* the new current edge. All connected vertices are pooled together. 
-* If a chosen edge connects vertices which have been already pooled, 
+* The process starts by choosing an initial edge (here longest edge).
+* All incident edges go to the queue and an incident edge which
+* forms the smallest angle with the current edge is chosen to be
+* the new current edge. All connected vertices are pooled together.
+* If a chosen edge connects vertices which have been already pooled,
 * this edge will be deleted. The process continues until no more edges are in the queue.
-*/	
+*/
 void RootGraph::getMinCurvSpanningTreeBreadthFirstSearch()
 {
-	map<int,multimap<float,int> > feature;
-	map<int,multimap<float,int> >::iterator fit;
+	map<int,multimap<float,int>> feature;
+	map<int,multimap<float,int>>::iterator fit;
 	multimap<float,int>::iterator eeit;
-	
+
 	set<int> vpool;
 	int e;
-	map<int,pair<int,int> >::iterator eit;
+	map<int,pair<int,int>>::iterator eit;
 	multimap<float,int>  ee;
 	set<int> todel;
 	set<int>::iterator delit;
-	__gnu_cxx::hash_set<int> visited;
-	
+	hash_set<int> visited;
+
 	curveEdgeMap(feature);
-	e=getLongestEdge();	
+	e=getLongestEdge();
 	ee.insert(make_pair(1.f,e));
 	while(!ee.empty())
 	{
@@ -1738,10 +1713,10 @@ void RootGraph::getMinCurvSpanningTreeBreadthFirstSearch()
 		ee.erase(ee.begin());
 		if(visited.find(e)!=visited.end())
 			continue;
-		visited.insert(e);		
+		visited.insert(e);
 		eit=E.find(e);
 		if(eit==E.end()) continue;
-		
+
 		//if the edge creates a loop (two vertices are already connected)
 		if(vpool.find(eit->second.first)!=vpool.end() && vpool.find(eit->second.second)!=vpool.end())
 		{todel.insert(e); continue;}
@@ -1759,24 +1734,24 @@ void RootGraph::getMinCurvSpanningTreeBreadthFirstSearch()
 
 	//remove edges in the list "to delete" from the graph
 	//maps to be updated:  E, v_inc, v_arc
-	for(delit=todel.begin(); delit!=todel.end(); delit++)	
+	for(delit=todel.begin(); delit!=todel.end(); delit++)
 		E.erase(*delit);
 	//update vertex incidence map
 	updateVertexIncidenceMap();
 }
 
 /**
-* This function constructs a map cee for incident pairs of edges 
-* prioritiezed by the angle between them. It is just a different 
+* This function constructs a map cee for incident pairs of edges
+* prioritiezed by the angle between them. It is just a different
 * representation of what is computed in curveEdgeMap
 */
-void RootGraph::getCurvEdgePairMap(map<int,multimap<float,int> > &feature, multimap<float,pair<int,int> > &cee)
+void RootGraph::getCurvEdgePairMap(map<int,multimap<float,int>> &feature, multimap<float,pair<int,int>> &cee)
 {
-	map<int,multimap<float,int> >::iterator fit;
+	map<int,multimap<float,int>>::iterator fit;
 	multimap<float,int>::iterator it;
-	__gnu_cxx::hash_map<int,__gnu_cxx::hash_set<int> > visited;
-	__gnu_cxx::hash_map<int,__gnu_cxx::hash_set<int> >::iterator vit;
-	__gnu_cxx::hash_map<int,__gnu_cxx::hash_set<int> >::iterator vit2;
+	hash_map<int,hash_set<int>> visited;
+	hash_map<int,hash_set<int>>::iterator vit;
+	hash_map<int,hash_set<int>>::iterator vit2;
 	int e1, e2;
 	for(fit=feature.begin(); fit!=feature.end(); fit++)
 	{
@@ -1784,11 +1759,11 @@ void RootGraph::getCurvEdgePairMap(map<int,multimap<float,int> > &feature, multi
 		for(it=fit->second.begin(); it!=fit->second.end(); it++)
 		{
 			e2=it->second;
-			//check if this pair of edges was alredy considered			
+			//check if this pair of edges was alredy considered
 			if(visited.find(e1)==visited.end() && visited.find(e2)==visited.end())
 			{
 				cee.insert(make_pair(it->first,make_pair(e1,e2)));
-				__gnu_cxx::hash_set<int> newset;
+				hash_set<int> newset;
 				newset.insert(e2);
 				visited.insert(make_pair(e1,newset));
 				continue;
@@ -1800,46 +1775,46 @@ void RootGraph::getCurvEdgePairMap(map<int,multimap<float,int> > &feature, multi
 				cee.insert(make_pair(it->first,make_pair(e1,e2)));
 				if(vit!=visited.end())
 					vit->second.insert(e2);
-				else vit2->second.insert(e1);				
+				else vit2->second.insert(e1);
 			}
 		}
 	}
 }
 
 /**
-* This function computes the minimum spanning 
-* tree of the graph. First all vertices are 
-* considered as separate connceted components. 
-* Pairs of incident edges are prioritized based 
-* on how small is the angle between them. 
-* The smallest angle is chosen first and adjacent 
-* vertices are collapsed into the same connected 
-* component. If an edge connects two vertices 
-* belonging to the same connected component, 
+* This function computes the minimum spanning
+* tree of the graph. First all vertices are
+* considered as separate connceted components.
+* Pairs of incident edges are prioritized based
+* on how small is the angle between them.
+* The smallest angle is chosen first and adjacent
+* vertices are collapsed into the same connected
+* component. If an edge connects two vertices
+* belonging to the same connected component,
 * then this edge will be deleted.
 */
 void RootGraph::getMinCurvSpanningTree()
 {
-	map<int,multimap<float,int> > feature;
-	multimap<float,pair<int,int> > cee;
-	multimap<float,pair<int,int> >::iterator ceeit;
+	map<int,multimap<float,int>> feature;
+	multimap<float,pair<int,int>> cee;
+	multimap<float,pair<int,int>>::iterator ceeit;
 	int e1,e2;
 	int e1n, e2n;
 	int v1,v2,vc,ve1, ve2;
 	int c1,c2,c3;
 	map<int,int> spanv;
-	map<int,int>::iterator itcc;	
-	
+	map<int,int>::iterator itcc;
+
 	set<int> todel;
 	set<int>::iterator delit;
-	__gnu_cxx::hash_set<int> visited;
-	
+	hash_set<int> visited;
+
 	curveEdgeMap(feature);
 	getCurvEdgePairMap(feature, cee);
 	int cid=1;
 	while(!cee.empty())
-	{		
-		v1=-1; 
+	{
+		v1=-1;
 		ceeit=cee.begin();
 		e1=ceeit->second.first;
 		e2=ceeit->second.second;
@@ -1875,13 +1850,13 @@ void RootGraph::getMinCurvSpanningTree()
 			e1n=e2;
 			e2n=e1;
 		}
-				
+
 		// if no conncted component was created for v1
 		if(visited.find(e1n)==visited.end())
 		{
 			if(c1==-1)
 			{
-				
+
 				//if the two nodes were not connected before to anything, they form a new connected component
 				if(c3==-1)
 				{
@@ -1894,10 +1869,10 @@ void RootGraph::getMinCurvSpanningTree()
 				//if one of the nodes is already inside another conn component, then the 1st vertex joins it
 				else
 				{
-					spanv.insert(make_pair(v1,c3));								
-					c1=c3;				
+					spanv.insert(make_pair(v1,c3));
+					c1=c3;
 				}//end if(c3==-1)
-				visited.insert(e1n);				
+				visited.insert(e1n);
 			}
 			else
 			{
@@ -1905,7 +1880,7 @@ void RootGraph::getMinCurvSpanningTree()
 				//if the second was not connected to anything, it joins the first
 				if(c3==-1)
 				{
-					spanv.insert(make_pair(vc,c1));															
+					spanv.insert(make_pair(vc,c1));
 					c3=c1;
 					visited.insert(e1n);
 				}
@@ -1914,15 +1889,15 @@ void RootGraph::getMinCurvSpanningTree()
 				{
 					if(c1==c3)
 					{
-						todel.insert(e1n);					
+						todel.insert(e1n);
 					}
 					else
-					{					
+					{
 						visited.insert(e1n);
 						//rename components
 						for(itcc=spanv.begin(); itcc!=spanv.end(); itcc++)
 							if(itcc->second==c1)
-								itcc->second=c3;					
+								itcc->second=c3;
 						c1=c3;
 					}
 				}//end else
@@ -1936,32 +1911,32 @@ void RootGraph::getMinCurvSpanningTree()
 			if(c2==-1)
 			{
 				//if the two nodes were not connected before to anything, they form a new connected component
-				spanv.insert(make_pair(v2,c3));							
-				c2=c3;			
+				spanv.insert(make_pair(v2,c3));
+				c2=c3;
 				visited.insert(e2n);
 			}
 			else
-			{			
+			{
 				//both vertex belong to different connected components, check if components different -> reduce cc, other wise through away the edge
 				if(c2==c3)
 				{
-					todel.insert(e2n);				
+					todel.insert(e2n);
 				}
 				else
-				{					
+				{
 					visited.insert(e2n);
 					//rename components
 					for(itcc=spanv.begin(); itcc!=spanv.end(); itcc++)
 						if(itcc->second==c2)
-							itcc->second=c3;					
-				}			
+							itcc->second=c3;
+				}
 			}//end if(c2==-1)
-		}		
+		}
 	}//end while
 
 	//remove edges in the list "to delete" from the graph
 	//maps to be updated:  E, v_inc, v_arc
-	for(delit=todel.begin(); delit!=todel.end(); delit++)	
+	for(delit=todel.begin(); delit!=todel.end(); delit++)
 		E.erase(*delit);
 
 	//update vertex incidence map
@@ -1972,7 +1947,7 @@ void RootGraph::getMinCurvSpanningTree()
 * Returns the id of the longest edge
 */
 int RootGraph::getLongestEdge()
-{	
+{
 	map<int,float>::iterator el;
 	float l=0;
 	int eid;

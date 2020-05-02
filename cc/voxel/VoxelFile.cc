@@ -1,21 +1,21 @@
 ////
 //// binvox, a binary 3D mesh voxelizer
 //// Copyright (c) 2004-2008 by Patrick Min, patrick.n.min "at" gmail "dot" com
-//// 
+////
 //// This program is free software; you can redistribute it and/or
 //// modify it under the terms of the GNU General Public License
 //// as published by the Free Software Foundation; either version 2
 //// of the License, or (at your option) any later version.
-//// 
+////
 //// This program is distributed in the hope that it will be useful,
 //// but WITHOUT ANY WARRANTY; without even the implied warranty of
 //// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //// GNU General Public License for more details.
-//// 
+////
 //// You should have received a copy of the GNU General Public License
 //// along with this program; if not, write to the Free Software
 //// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-//// 
+////
 ////
 //// $Id: VoxelFile.cc,v 1.8 2004/07/06 10:53:58 min Exp min $
 ////
@@ -53,9 +53,9 @@
 //  output = 0;
 //
 //  with_types = 1;
-//  
+//
 //  vtk_comment_string = DEFAULT_VTK_COMMENT_STRING;
-//  
+//
 //}  // constructor
 //
 //
@@ -63,7 +63,7 @@
 //VoxelFile::~VoxelFile()
 //{
 //  close();
-//  
+//
 //}  // destructor
 //
 //
@@ -98,7 +98,7 @@
 //	test_filespec += ".";
 //	test_filespec += extensions[my_filetype];
 //	if (counter) cout << "trying [" << test_filespec << "]" << endl;
-//      
+//
 //	fstream inp_test;
 //	inp_test.open(test_filespec.c_str(), ios::in);
 //	if (inp_test.is_open()) {
@@ -109,13 +109,13 @@
 //	else
 //	  filename_ok = true;
 //      }  // while
-//    
+//
 //      total_filespec = test_filespec;
 //    }  // else, filename not ok
 //  }
 //  else
 //    cout << "VoxelFile::set_filespec(" << my_filetype << ") error: unknown file type" << endl;
-//  
+//
 //}  // VoxelFile::set_filespec
 //
 //
@@ -125,7 +125,7 @@
 //{
 //  my_filetype = type;
 //  set_filespec(false);
-//  
+//
 //#if IRIX
 //  input = new ifstream(total_filespec.c_str(), ios::in);
 //#else
@@ -134,7 +134,7 @@
 //  else
 //	  input = new ifstream(total_filespec.c_str(), ios::in | ios::binary);
 //#endif
-//  
+//
 //  if (!input->good()) {
 //    cout << "Error opening [" << total_filespec << "]" << endl;
 //    delete input;
@@ -143,7 +143,7 @@
 //  }
 //
 //  return 1;
-//  
+//
 //}  // VoxelFile::open_for_read
 //
 //
@@ -153,14 +153,14 @@
 //{
 //  my_filetype = type;
 //  set_filespec(true);
-//  
+//
 //#if IRIX
 //  output = new ofstream(total_filespec.c_str(), ios::out);
 //#else
 // // printf("total_filespec: %s\n", total_filespec.c_str());
 //  output = new ofstream(total_filespec.c_str(), ios::out | ios::binary);
 //#endif
-//  
+//
 //  if (!output->good()) {
 //    cout << "Error creating [" << total_filespec << "]" << endl;
 //    delete output;
@@ -169,7 +169,7 @@
 //  }
 //
 //  return 1;
-//  
+//
 //}  // VoxelFile::open_for_write
 //
 //
@@ -196,11 +196,11 @@
 //  string::size_type dot_pos = filespec.rfind('.');
 //  string extension = filespec.substr(dot_pos + 1);
 //  filespec.erase(dot_pos);
-//  
+//
 //  cout << "  filename: [" << filespec << "], extension: [" << extension << "]" << endl;
 //
 //  return load(filespec, extension);
-//  
+//
 //}  // VoxelFile::load
 //
 //
@@ -209,16 +209,16 @@
 //VoxelFile::get_filetype(string extension)
 //{
 //  //  cout << "VoxelFile::get_filetype(" << extension << ")" << endl;
-//  
+//
 //  int filetype = -1;
 //  for(int i=0; i < (int)extension.length(); i++) extension[i] |= 0x20;  // lowercase it first
-//  
+//
 //  for(int i=0; (i < NR_EXTENSIONS) && (filetype == -1); i++) {
 //    if (extension.compare(extensions[i]) == 0) filetype = i;
 //  }
-//  
+//
 //  return filetype;
-//  
+//
 //}  // VoxelFile::get_filetype
 //
 //
@@ -227,7 +227,7 @@
 //VoxelFile::load(string filename, string extension)
 //{
 //  my_filetype = get_filetype(extension);
-//  
+//
 //  switch(my_filetype) {
 //   // case BINVOX: return read_binvox();
 //    case VT: return read_vt();
@@ -238,7 +238,7 @@
 //  }  // switch
 //
 //  return 0;
-//  
+//
 //}  // VoxelFile::load
 //
 //
@@ -264,7 +264,7 @@
 //  depth = -1;
 //  Vector norm_translate;
 //  Float norm_scale;
-//  
+//
 //  int done = 0;
 //  while(input->good() && !done) {
 //    *input >> line;
@@ -294,11 +294,11 @@
 //    cout << "  missing dimension in header" << endl;
 //    return 0;
 //  }
-//  
+//
 //  voxels.init(width, height, depth, with_types);
 //  voxels.set_norm_translate(norm_translate);
 //  voxels.set_norm_scale(norm_scale);
-//  
+//
 //  //
 //  // read voxel data
 //  //
@@ -307,11 +307,11 @@
 //  int index = 0;
 //  int end_index = 0;
 //  int nr_voxels = 0;
-//  
+//
 //  input->unsetf(ios::skipws);  // !! need to read every byte now !!
 //  *input >> value;  // read the linefeed char
 //  int size = voxels.get_size();
-//  
+//
 //  while((end_index < size) && input->good()) {
 //    *input >> value >> count;
 //    //    cout << "Read value: " << (int) value << ", count: " << (int) count << endl;
@@ -320,11 +320,11 @@
 //      end_index = index + count;
 //      if (end_index > size) return 0;
 //      for(int i=index; i < end_index; i++) voxels[i] = value;
-//      
+//
 //      if (value) nr_voxels += count;
 //      index = end_index;
 //    }  // if file still ok
-//    
+//
 //  }  // while
 //
 //  input->close();
@@ -347,9 +347,9 @@
 //  //     }
 //  //   }
 //  //   vox_coords.close();
-//  
+//
 //  return 1;
-//  
+//
 //}  // VoxelFile::read_binvox
 //*/
 //
@@ -377,10 +377,10 @@
 //	{
 //		cout<<"Can't find the value of width - exitting...";
 //		exit(0);
-//	}		
+//	}
 //	pt=line.find("<\\Width>", p);
-//	xystr=line.substr(p,pt-p);			
-//	width=atoi(xystr.c_str());		
+//	xystr=line.substr(p,pt-p);
+//	width=atoi(xystr.c_str());
 //	printf("Width: %d\n", width);
 //
 //	p=line.find("<Height>", p);
@@ -391,8 +391,8 @@
 //		exit(0);
 //	}
 //	pt=line.find("<\\Height>", p);
-//	xystr=line.substr(p,pt-p);			
-//	height=atoi(xystr.c_str());		
+//	xystr=line.substr(p,pt-p);
+//	height=atoi(xystr.c_str());
 //	printf("Heigth: %d\n", height);
 //
 //	p=line.find("<Depth>", p);
@@ -403,11 +403,11 @@
 //		exit(0);
 //	}
 //	pt=line.find("<\\Depth>", p);
-//	xystr=line.substr(p,pt-p);			
-//	depth=atoi(xystr.c_str());	
+//	xystr=line.substr(p,pt-p);
+//	depth=atoi(xystr.c_str());
 //	printf("Depth: %d\n", depth);
 //
-//	
+//
 //  Vector norm_translate;
 //  norm_translate[0]=0;norm_translate[1]=0;norm_translate[2]=0;
 //  Float norm_scale=1.f;
@@ -415,21 +415,21 @@
 //  voxels.init(width, height, depth, with_types);
 //  voxels.set_norm_translate(norm_translate);
 //  voxels.set_norm_scale(norm_scale);
-// 
+//
 //  string zstr;
 //  int a,b,c,zlen;
-//			
+//
 //		while(p>=0)
 //		{
 //			p=line.find("<Slice slc=\"", p);
 //			if(p>0) p=p+12;
-//			else 
+//			else
 //				continue;
 //			pt=line.find("\">", p);
 //			zstr=line.substr(p,pt-p);
 //			zlen=zstr.length();
 //			b=atoi(zstr.c_str());
-//			//b=height-b-1;			
+//			//b=height-b-1;
 //			pstop =line.find("</Slice>", p);
 //			while(pt<pstop-5)
 //			{
@@ -438,19 +438,19 @@
 //				xystr=line.substr(p,pt-p);
 //				tokenize(xystr, ptr, " ");
 //				a=atoi(ptr[0].c_str());
-//				c=atoi(ptr[1].c_str());	
+//				c=atoi(ptr[1].c_str());
 //				int ind=a*height*depth+b*depth+c;
 //				voxels[ind]=1;
 //				ptr.clear();
 //			}
-//		}				
-//  
+//		}
+//
 //  }
-//  input->close();  
+//  input->close();
 //  voxels.init_types();
 //  voxels.update_voxel_refs();
-//   
-//  return 1;  
+//
+//  return 1;
 //}  // VoxelFile::read_rtvox
 //*/
 //int
@@ -477,11 +477,11 @@
 //  int index = 0;
 //  int end_index = 0;
 //  int nr_voxels = 0;
-//  
+//
 //  input->unsetf(ios::skipws);  // !! need to read every byte now !!
 //  *input >> value;  // read the linefeed char
 //  int size = voxels.get_size();
-//  
+//
 //  //
 //  // read voxel data
 //  //
@@ -493,11 +493,11 @@
 //      end_index = index + count;
 //      if (end_index > size) return 0;
 //      for(int i=index; i < end_index; i++) voxels[i] = 1 - value;
-//      
+//
 //      if (!value) nr_voxels += count;
 //      index = end_index;
 //    }  // if file still ok
-//    
+//
 //  }  // while
 //
 //
@@ -507,7 +507,7 @@
 //  end_index = 0;
 //  index = 0;
 //  int nr_types = 0;
-//  
+//
 //  while((end_index < size) && input->good()) {
 //    *input >> value >> count;
 //    //    cout << "Read value: " << (int) value << ", count: " << (int) count << endl;
@@ -516,22 +516,22 @@
 //      end_index = index + count;
 //      if (end_index > size) return 0;
 //      for(int i=index; i < end_index; i++) voxels.set_type(i, value);
-//      
+//
 //      if (!value) nr_types += count;
 //      index = end_index;
 //    }  // if file still ok
-//    
+//
 //  }  // while
-//  
+//
 //  input->close();
 //
 //  cout << "  read " << nr_voxels << " voxels, " << nr_types << " types" << endl;
 //
 //  voxels.update_voxel_refs();
-//  
+//
 //  return 1;
-//  
-//  
+//
+//
 //}  // VoxelFile::read_vt
 //
 //
@@ -552,7 +552,7 @@
 //  }  // switch
 //
 //  return 0;
-//  
+//
 //}  // Voxels::write_file
 //
 //
@@ -577,14 +577,14 @@
 //  *output << "translate " << norm_translate[X] << " " << norm_translate[Y] << " " << norm_translate[Z] << endl;
 //  *output << "scale " << norm_scale << endl;
 //  *output << "data" << endl;
-//  
+//
 //  byte value;
 //  byte count;
 //  int index = 0;
 //  int bytes_written = 0;
 //  int size = voxels.get_size();
 //  int total_ones = 0;
-//  
+//
 //  while (index < size) {
 //
 //    value = voxels[index];
@@ -595,10 +595,10 @@
 //    }
 //    //    value = 1 - value;
 //    if (value) total_ones += count;
-//    
+//
 //    *output << value << count;  // inverted...
 //    bytes_written += 2;
-//    
+//
 //  }  // while
 //
 //  output->close();
@@ -617,7 +617,7 @@
 //{
 //  int width, height, depth;
 //  voxels.get_dimensions(&width, &height, &depth);
-//  
+//
 //  //
 //  // write header
 //  //
@@ -625,13 +625,13 @@
 //  *output << depth << endl;
 //  *output << height << endl;
 //  *output << width << endl;
-//  
+//
 //  byte value;
 //  byte count;
 //  int index = 0;
 //  int bytes_written = 0;
 //  int size = voxels.get_size();
-//  
+//
 //  while (index < size) {
 //
 //    value = voxels[index];
@@ -641,10 +641,10 @@
 //      count++;
 //    }
 //    value = 1 - value;
-//    
+//
 //    *output << value << count;  // inverted...
 //    bytes_written += 2;
-//    
+//
 //  }  // while
 //
 //  //
@@ -653,7 +653,7 @@
 //  index = 0;
 //  int type_bytes_written = 0;
 //  while (index < size) {
-//    
+//
 //    value = voxels.get_type(index);
 //    count = 0;
 //    while((index < size) && (count < 255) && (value == voxels.get_type(index))) {
@@ -662,15 +662,15 @@
 //    }
 //    *output << value << count;
 //    type_bytes_written += 2;
-//    
+//
 //  }  // while
-//  
+//
 //  output->close();
-//  
+//
 //  cout << "  wrote " << size << " voxels, in " << bytes_written << " bytes, types in "
 //       << type_bytes_written << " bytes" << endl;
 //  return 1;
-//  
+//
 //}  // VoxelFile::write_vt
 //
 //
@@ -681,7 +681,7 @@
 //// Multiresolution Isosurface Extraction with Adaptive Skeleton Climbing
 ////
 //// Tim Poston , Tien-Tsin Wong , and Pheng-Ann Heng,
-//// Computer Graphics Forum, Vol. 17, No. 3, September 1998, pp. 137-148. 
+//// Computer Graphics Forum, Vol. 17, No. 3, September 1998, pp. 137-148.
 ////
 //typedef struct  {
 //  char fileid[5];
@@ -735,11 +735,11 @@
 //  for(int i=0; i < size; i++) voxels[i] *= 255;
 //
 //  output->write((const char *) voxels.get_voxels_p(), depth * height * width);
-//  
+//
 //  output->close();
 //
 //  return 1;
-//  
+//
 //}  // VoxelFile::write_mira
 //
 //
@@ -766,7 +766,7 @@
 //  unsigned short width = fh.yres;
 //  unsigned short height = fh.zres;
 //  depth = swap_byte_order(depth), width = swap_byte_order(width), height = swap_byte_order(height);
-//  
+//
 //  cout << "  dimensions (d x h x w): " << depth << " x " << height << " x " << width << endl;
 //  voxels.init(width, height, depth, with_types);
 //
@@ -774,7 +774,7 @@
 //  int map_size = fh.voxel_offset - fh.map_offset;
 //  byte *map_buffer = new byte[map_size];
 //  input->read((char *) map_buffer, map_size);
-//  
+//
 //  // now read the voxels
 //  int size = depth * height * width;
 //  input->read((char *) voxels.get_voxels_p(), size);
@@ -814,13 +814,13 @@
 //  }
 //
 //  for(int i=0; i < size; i++) rv[i] = 255 * voxels[i];
-//  
+//
 //  output->write((const char *) rv, depth * height * width);
 //  delete[] rv;
-//  
+//
 //  output->close();
 //  return 1;
-//  
+//
 //}  // VoxelFile::write_raw_vox
 //
 //
@@ -837,7 +837,7 @@
 //  *output << "DIMENSIONS " << depth << " " << width << " " << height << endl;
 //  *output << "ORIGIN 0 0 0" << endl;
 //  *output << "SPACING 1 1 1" << endl;
-//  
+//
 //  int size = depth * height * width;
 //  *output << "POINT_DATA " << size << endl;
 //  *output << "SCALARS voxel_data unsigned_char" << endl;
@@ -850,14 +850,14 @@
 //  }
 //
 //  for(int i=0; i < size; i++) rv[i] = 128 * voxels[i];
-//  
+//
 //  output->write((const char *) rv, depth * height * width);
 //  delete[] rv;
 //
 //  output->close();
 //
 //  return 1;
-//  
+//
 //}  // VoxelFile::write_vtk
 //
 //

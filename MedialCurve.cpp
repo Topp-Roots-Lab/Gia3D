@@ -8,7 +8,6 @@
 #include "RootGraph.h"
 #include "cc/voxel/VoxelFilter.h"
 #include "cc/voxel/PalagyiFilter.h"
-
 #ifdef __cplusplus /* identifies C++ */
 extern "C" { // tell the C++ compiler that you have C decls
 #include "libqhull.h"
@@ -16,20 +15,6 @@ extern "C" { // tell the C++ compiler that you have C decls
 #endif
 
 //#define DEBUG
-
-// 2012-09-20
-//
-// Vladimir Popov changed (if matches were found) below, when adjusting this code to Linux
-//
-// >> substituted by > >  in all generic types (templates)
-// for instance,map<int,pair<int,int>>  changed to map<int,pair<int,int> >
-//
-// stdext:: substituted by __gnu_cxx::
-//
-// hash_map substituted by __gnu_cxx::hash_map
-//
-// hash_set substituted by __gnu_cxx::hash_set
-
 
 MedialCurve::MedialCurve(void)
 {
@@ -168,7 +153,7 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 	int k=0;
 
 	int nvox;
-	vector<vector<int> > coords;
+	vector<vector<int>> coords;
 	int minx, maxx, miny, maxy, minz, maxz;
 	minx=INT_MAX; miny=INT_MAX; minz=INT_MAX;
 	maxx=INT_MIN; maxy=INT_MIN; maxz=INT_MIN;
@@ -233,11 +218,11 @@ MedialCurve::~MedialCurve(void)
 * This function creates a vector of branches incident to tips.
 * Each branch is represented by a vector of linear indices of voxels
 */
-void MedialCurve::getTipBranches(vector<vector<int> > &tipbranches)
+void MedialCurve::getTipBranches(vector<vector<int>> &tipbranches)
 {
 	tipbranches.clear();
-	__gnu_cxx::hash_set<int> tips;
-	__gnu_cxx::hash_set<int>::iterator itt;
+	hash_set<int> tips;
+	hash_set<int>::iterator itt;
 	//get a set of indices of tip voxels
 	getTipsList(tips);
 	for(itt=tips.begin(); itt!=tips.end(); itt++)
@@ -260,7 +245,7 @@ void MedialCurve::getIncidentBranch(int tip, vector<int> &branch)
 	branch.clear();
 	int nb=1;
 	int v=tip;
-	__gnu_cxx::hash_set<int>visited;
+	hash_set<int>visited;
 	while(nb==1)
 	{
 		branch.push_back(v);
@@ -308,7 +293,7 @@ float MedialCurve::getBranchLength(vector<int> &br)
 void MedialCurve::createSkeleton(float scale)
 {
 	//create a map where erosion distance will be stored
-	__gnu_cxx::hash_map<int, float> distR;
+	hash_map<int, float> distR;
 	//apply thinning with erosion distance computation
 	thinning(distR);
 	//filter the skeleton
@@ -330,9 +315,9 @@ void MedialCurve::scaleAxis(float sc)
 {
 	scale=sc;
 	bool removed_edges=true;
-	__gnu_cxx::hash_map<int,float> distR(voxset);
-	__gnu_cxx::hash_set<int> br_list;
-	__gnu_cxx::hash_set<int>::iterator brit;
+	hash_map<int,float> distR(voxset);
+	hash_set<int> br_list;
+	hash_set<int>::iterator brit;
 	setScale();
 
 	// continue filtering while the edges can be removed
@@ -341,7 +326,7 @@ void MedialCurve::scaleAxis(float sc)
 		removed_edges=false;
 
 		//get all pendant branches - the branches incident to tip voxels
-		vector<vector<int> > tipbranches;
+		vector<vector<int>> tipbranches;
 		getTipBranches(tipbranches);
 		// try to filter pendant branches, return true if some branches were removed
 		int nbr=tipbranches.size();
@@ -387,10 +372,10 @@ void MedialCurve::scaleAxis(float sc)
 * copy distance values associated
 * with the voxel indices in the map distR to the current object
 */
-void MedialCurve::copyDistances(__gnu_cxx::hash_map<int,float> &distR)
+void MedialCurve::copyDistances(hash_map<int,float> &distR)
 {
-	__gnu_cxx::hash_map<int,float>::iterator it;
-	__gnu_cxx::hash_map<int,float>::iterator it1;
+	hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it1;
 	for(it=voxset.begin(); it!=voxset.end(); it++)
 	{
 		it1=distR.find(it->first);
@@ -436,10 +421,10 @@ void MedialCurve::get_6_neighbours(int ind, vector<int> &nb)
 /***
 * Get all the indices of bifurcation nodes stored in the hash_set
 */
-void MedialCurve::getBiffurcationList(__gnu_cxx::hash_set<int> &br)
+void MedialCurve::getBiffurcationList(hash_set<int> &br)
 {
 	br.clear();
-	__gnu_cxx::hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it;
 	for(it=voxset.begin(); it!=voxset.end(); ++it)
 	{
 		int nb=0;
@@ -462,14 +447,14 @@ void MedialCurve::getBiffurcationList(__gnu_cxx::hash_set<int> &br)
 * A one-voxel wide structure is assumed.
 * Each edge is represented as a vector of ordered voxels indices.
 */
-void MedialCurve::getEdges(vector<vector<int> > &edges)
+void MedialCurve::getEdges(vector<vector<int>> &edges)
 {
 	edges.clear();
-	__gnu_cxx::hash_map<int,float>::iterator it;
-	__gnu_cxx::hash_map<int,float>::iterator itf;
-	__gnu_cxx::hash_set<int>::iterator its;
-	__gnu_cxx::hash_set<int> branches;
-	__gnu_cxx::hash_set<int> nonbr;
+	hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator itf;
+	hash_set<int>::iterator its;
+	hash_set<int> branches;
+	hash_set<int> nonbr;
 	bool flag;
 	int n;
 	// in this loop I collect bifurcation and non-bif voxels into 2 different sets
@@ -572,7 +557,7 @@ void MedialCurve::getEdges(vector<vector<int> > &edges)
 	for(int ii=0; ii<(int)edges.size(); ii++)
 	{
 		edge.clear();
-		__gnu_cxx::hash_set<int>edge_pool(edges[ii].begin(),edges[ii].end());
+		hash_set<int>edge_pool(edges[ii].begin(),edges[ii].end());
 		int v=start_edge[ii];
 		edge.push_back(v);
 		while(!edge_pool.empty())
@@ -609,12 +594,12 @@ void MedialCurve::getEdges(vector<vector<int> > &edges)
 * The edge features are stored in the map features, the key is the name of the feature;
 * Edge_num, Av_Edge_length
 */
-void MedialCurve::getEdgesFeatures(vector<pair<string,double> > &features)
+void MedialCurve::getEdgesFeatures(vector<pair<string,double>> &features)
 {
-	vector<vector<int> > edges;
+	vector<vector<int>> edges;
 	// first get all edges
 	getEdges(edges);
-	__gnu_cxx::hash_set<int> tips;
+	hash_set<int> tips;
 	//get the set of pendant voxels
 	getTipsList(tips);
 
@@ -649,16 +634,16 @@ void MedialCurve::getEdgesFeatures(vector<pair<string,double> > &features)
 * where the key is the name of the feature:
 * Number_bif_cl, Av_size_bif_cl
 */
-void MedialCurve::getBifClusterFeatures(vector<pair<string, double> > &features)
+void MedialCurve::getBifClusterFeatures(vector<pair<string, double>> &features)
 {
 	//first compute conn components of bif clusters
-	set<set<int> > bifcl;
+	set<set<int>> bifcl;
 	getBifClustersList(bifcl);
 	int nb=bifcl.size();
 	features.push_back(pair<string,double>("Number_bif_cl",nb));
 	//compute average size of the clusters
 	float brsize=0;
-	set<set<int> >::iterator it;
+	set<set<int>>::iterator it;
 	for(it=bifcl.begin(); it!=bifcl.end(); it++)
 		brsize=brsize+(*it).size();
 	brsize=brsize/nb;
@@ -671,15 +656,15 @@ void MedialCurve::getBifClusterFeatures(vector<pair<string, double> > &features)
 * Each bifurcation cluster is represented
 * as a set of indices of bifurcation voxels.
 */
-void MedialCurve::getBifClustersList(set<set<int> > &v_cl)
+void MedialCurve::getBifClustersList(set<set<int>> &v_cl)
 {
 	v_cl.clear();
 	vector<double> pos(3);
-	__gnu_cxx::hash_map<int,float>::iterator it;
-	__gnu_cxx::hash_map<int,float>::iterator itf;
-	vector<vector<int> > brcomp;
-	__gnu_cxx::hash_set<int>::iterator its;
-	__gnu_cxx::hash_set<int> branches;
+	hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator itf;
+	vector<vector<int>> brcomp;
+	hash_set<int>::iterator its;
+	hash_set<int> branches;
 	int n;
 	//get all bifurcation voxels
 	for(it=voxset.begin(); it!=voxset.end(); it++)
@@ -748,7 +733,7 @@ void MedialCurve::getBifClustersList(set<set<int> > &v_cl)
 */
 void MedialCurve::setScale()
 {
-	__gnu_cxx::hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it;
 	mind=10000;
 	maxd=0;
 
@@ -766,7 +751,7 @@ void MedialCurve::setScale()
 * without changing its topology.
 * This function computes erosion distance which is stored in the map distR.
 */
-void MedialCurve::thinning(__gnu_cxx::hash_map<int, float> &distR)
+void MedialCurve::thinning(hash_map<int, float> &distR)
 {
 	distR.clear();
 	//create voxel structure for thinning
@@ -800,8 +785,8 @@ void MedialCurve::thinning(__gnu_cxx::hash_map<int, float> &distR)
 		filter->applyWdist(distR);
 	}
 	//put thinned voxel structure back into medialCurve object
-	__gnu_cxx::hash_map<int, float> newvs;
-	__gnu_cxx::hash_map<int, float>::iterator it;
+	hash_map<int, float> newvs;
+	hash_map<int, float>::iterator it;
 	int s=vv.get_size();
 	for(int i=0; i<s; i++)
 		if(vv[i]==1)
@@ -812,7 +797,7 @@ void MedialCurve::thinning(__gnu_cxx::hash_map<int, float> &distR)
 				printf("Error in thinning, can't find erosion distance!\n");
 				continue;
 			}
-			newvs.insert(make_pair<int,float>(int(i),float(it->second)));
+			newvs.insert(make_pair<int,float>(i,it->second));
 		}
 		//output to a file
 	/*filename = "thin_test";
@@ -968,21 +953,21 @@ void MedialCurve::thinning()
 		filter->apply_fast();
 	}
 	//put thinned voxel structure back into medialCurve object
-	__gnu_cxx::hash_map<int, float> newvs;
+	hash_map<int, float> newvs;
 	int s=vv.get_size();
 	for(int i=0; i<s; i++)
 		if(vv[i]==1)
-			newvs.insert(make_pair<int,float>(int(i),1.f));
+			newvs.insert(make_pair<int,float>(i,1.f));
 	voxset.swap(newvs);
 }
 
 /**
 * Get a set of tip nodes (degree=1)
 */
-void MedialCurve::getTipsList(__gnu_cxx::hash_set<int> &tips)
+void MedialCurve::getTipsList(hash_set<int> &tips)
 {
 	tips.clear();
-	__gnu_cxx::hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it;
 	for(it=voxset.begin(); it!=voxset.end(); ++it)
 	{
 		int nb=0;
@@ -1010,12 +995,12 @@ void MedialCurve::getTipsList(__gnu_cxx::hash_set<int> &tips)
 void MedialCurve::repair()
 {
 //#define DEBUG
-	vector<set<int> > cc;
+	vector<set<int>> cc;
 #ifdef DEBUG
 	printf("Computing connected components...\n");
 #endif
-	__gnu_cxx::hash_set<int> vset;
-	for(__gnu_cxx::hash_map<int,float>::iterator it=voxset.begin(); it!=voxset.end(); it++)
+	hash_set<int> vset;
+	for(hash_map<int,float>::iterator it=voxset.begin(); it!=voxset.end(); it++)
 		vset.insert(it->first);
 	getConnectedComponents(vset,cc,26);
 	//printf("Number connected components of foreground 26nb: %d\n",cc.size());
@@ -1075,13 +1060,13 @@ void MedialCurve::repair()
 * and it is represented by a  set of linear indices.
 * The third argument is the connectevity scheme: it should be 26 for foregrounf and 6 for background
 */
-int MedialCurve::getConnectedComponents(__gnu_cxx::hash_set<int> &vset, vector<set<int> > &cc, int conn)
+int MedialCurve::getConnectedComponents(hash_set<int> &vset, vector<set<int>> &cc, int conn)
 {
 	cc.clear();
 	queue<int> q;
 	//create a temporary list of indices
-	__gnu_cxx::hash_set<int> temp(vset);
-	__gnu_cxx::hash_set<int>::iterator ittemp;
+	hash_set<int> temp(vset);
+	hash_set<int>::iterator ittemp;
 
 	int n=0;
 	int indn;
@@ -1143,7 +1128,7 @@ int MedialCurve::getConnectedComponents(__gnu_cxx::hash_set<int> &vset, vector<s
 void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 {
 	set<int>::iterator it;
-	__gnu_cxx::hash_set<int> bd;
+	hash_set<int> bd;
 #ifdef DEBUG
 	printf("Collecting boundary voxels...\n");
 #endif
@@ -1164,7 +1149,7 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 	printf("Computing cc of bd voxels...\n");
 #endif
 	//now compute connected components of bd voxels using 6 connectivity scheme
-	vector<set<int> >bcc(0);
+	vector<set<int>>bcc(0);
 	getConnectedComponents(bd,bcc,6);
 	//printf("Number connected components of background 6nb: %d\n",bcc.size());
 #ifdef DEBUG
@@ -1246,7 +1231,7 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 //* Max number of roots (MaxR), Bushiness, Depth, Horizontal Equivalent Radius(HorEqDiameter),
 //* TotalLength, SRL((=TotalLength/Volume)), Length_Distr, W_D_ratio (=HorEqDiameter/Depth)
 //*/
-void MedialCurve::computeFeatures(vector<pair<string,double> > &features, MedialCurve &skel)
+void MedialCurve::computeFeatures(vector<pair<string,double>> &features, MedialCurve &skel)
 {
 	clock_t start, end;
 	double elapsed;
@@ -1301,11 +1286,11 @@ void MedialCurve::computeFeatures(vector<pair<string,double> > &features, Medial
 /*
 * This function computes features estimated with the use of skeleton: depth, total length, #tips, volume, surface area
 */
-void MedialCurve::computeSkeletonEstimatedFeatures(vector<pair<string,double> > &features, __gnu_cxx::hash_map<int,float> &dtmap)
+void MedialCurve::computeSkeletonEstimatedFeatures(vector<pair<string,double>> &features, hash_map<int,float> &dtmap)
 {
 	//depth compuation - y coordinate
-	__gnu_cxx::hash_map<int,float>::iterator it;
-	__gnu_cxx::hash_map<int,float>::iterator it2;
+	hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it2;
 	int x,y,z;
 	int miny=ysize+1;
 	int maxy=-1;
@@ -1319,7 +1304,7 @@ void MedialCurve::computeSkeletonEstimatedFeatures(vector<pair<string,double> > 
 	}
 	int depth=maxy-miny+1;
 	int total_length=voxset.size();
-	__gnu_cxx::hash_set<int> tips;
+	hash_set<int> tips;
 	getTipsList(tips);
 	int ntips=tips.size();
 	//volume and surface area
@@ -1364,7 +1349,7 @@ double MedialCurve::computeLengthDistribution(MedialCurve &skel, double depth, d
 	double len2=0;
 	int x,y,z;
 	int third_depth=(int)miny+(int)(depth/3);
-	__gnu_cxx::hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it;
 	for(it=skel.voxset.begin(); it!=skel.voxset.end(); it++)
 	{
 		skel.linind2subind(it->first,x,y,z);
@@ -1385,7 +1370,7 @@ double MedialCurve::computeSurfaceArea_lateral()
 {
 	double surfarea =0;
 
-	__gnu_cxx::hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it;
 	int temp;
 	for(it=voxset.begin(); it!=voxset.end(); it++)
 	{
@@ -1416,7 +1401,7 @@ double MedialCurve::computeSurfaceArea()
 {
 		double surfarea =0;
 
-	__gnu_cxx::hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it;
 	for(it=voxset.begin(); it!=voxset.end(); it++)
 	{
 		int ind=it->first;
@@ -1482,7 +1467,7 @@ void MedialCurve::computeSweepingFeatures(double &medR, double &maxR, double &ma
 	int x,y,z;
 	int y0, yfin;
 	bool cont=true;
-	__gnu_cxx::hash_map<int, float>::iterator it;
+	hash_map<int, float>::iterator it;
 	map<int, int>new2old;
 	map<int, int>::iterator itn2o;
 	int newindex;
@@ -1506,8 +1491,8 @@ void MedialCurve::computeSweepingFeatures(double &medR, double &maxR, double &ma
 	int numcc;
 	queue<int> cc;
 	vector<int>numcomp(ysize);
-	__gnu_cxx::hash_set<int> allvox;
-	__gnu_cxx::hash_set<int>::iterator itset;
+	hash_set<int> allvox;
+	hash_set<int>::iterator itset;
 
 	//convert the linear indices so that
 	//their valye increases as y-coordinate increases
@@ -1588,7 +1573,7 @@ void MedialCurve::computeSweepingFeatures(double &medR, double &maxR, double &ma
 			maxwidth=(float)width;
 
 		//now compute # of connected components	in a slice
-		vector<set<int> > cc;
+		vector<set<int>> cc;
 		numcc=getConnectedComponents(allvox,cc,26);
 		cc.clear();
 		numcomp[i-y0]=numcc;
@@ -1623,7 +1608,7 @@ void MedialCurve::getBoundaryVector(vector<double> &v)
 	int i,j,k;
 	int ind=0;
 	int count=0;
-	__gnu_cxx::hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it;
 
 	v.resize(voxset.size()*3,0);
 
@@ -1642,16 +1627,16 @@ void MedialCurve::getBoundaryVector(vector<double> &v)
 	v.resize(count);
 }
 
-void MedialCurve::dt(__gnu_cxx::hash_map<int,float> &dtmap)
+void MedialCurve::dt(hash_map<int,float> &dtmap)
 {
-	__gnu_cxx::hash_map<int,float>::iterator it;
-	priority_queue<pair<float,int>, vector<pair<float,int> >, greater<pair<float,int> > > q;
+	hash_map<int,float>::iterator it;
+	priority_queue<pair<float,int>, vector<pair<float,int>>, greater<pair<float,int>>> q;
 	float val;
 	float valtemp;
 	float sqr2 = (float)sqrt(2.0);
 	float sqr3 = (float)sqrt(3.0);
 	pair<float,int> p;
-	__gnu_cxx::hash_map<int,float> curvals;
+	hash_map<int,float> curvals;
 	int ind;
 	for(it=voxset.begin(); it!=voxset.end(); it++)
 	{
@@ -1719,7 +1704,7 @@ void MedialCurve::dt(__gnu_cxx::hash_map<int,float> &dtmap)
 	}
 }
 
-//bool greater_pair(pair<float,vector<float> > p1, pair<float,vector<float> > p2)
+//bool greater_pair(pair<float,vector<float>> p1, pair<float,vector<float>> p2)
 //{
 //	if(p1.first>p2.first) return true;
 //	else return false;
@@ -1727,24 +1712,24 @@ void MedialCurve::dt(__gnu_cxx::hash_map<int,float> &dtmap)
 
 //class compare_pair { // simple comparison function
 //   public:
-//	   bool operator()(const pair<float,vector<float> > p1, const pair<float,vector<float> > p2) { return (p1.first>p2.first); } // returns x>y
+//	   bool operator()(const pair<float,vector<float>> p1, const pair<float,vector<float>> p2) { return (p1.first>p2.first); } // returns x>y
 //};
 
-void MedialCurve::getTotalLength(__gnu_cxx::hash_map<int,float> &dtmap, float &len, float &vol, float &sa)
+void MedialCurve::getTotalLength(hash_map<int,float> &dtmap, float &len, float &vol, float &sa)
 {
 	float tl=0;
 	float sqr2 = (float)sqrt(2.0);
 	float sqr3 = (float)sqrt(3.0);
 	float valtemp;
 	float newd;
-	__gnu_cxx::hash_map<int,float>::iterator it;
-	__gnu_cxx::hash_map<int,float>::iterator it2;
-	__gnu_cxx::hash_map<int,float>::iterator itincr;
-	__gnu_cxx::hash_map<int,int>::iterator itp;
-	__gnu_cxx::hash_map<int,float> curvals;
-	__gnu_cxx::hash_map<int,int> parents;
-	__gnu_cxx::hash_map<int,float> increment;
-	priority_queue<pair<float,int>, vector<pair<float,int> >, greater<pair<float,int> > > q;
+	hash_map<int,float>::iterator it;
+	hash_map<int,float>::iterator it2;
+	hash_map<int,float>::iterator itincr;
+	hash_map<int,int>::iterator itp;
+	hash_map<int,float> curvals;
+	hash_map<int,int> parents;
+	hash_map<int,float> increment;
+	priority_queue<pair<float,int>, vector<pair<float,int>>, greater<pair<float,int>>> q;
 	pair<float,int> p;
 	int seed=voxset.begin()->first;
 	it=voxset.begin();
@@ -1753,7 +1738,7 @@ void MedialCurve::getTotalLength(__gnu_cxx::hash_map<int,float> &dtmap, float &l
 	q.push(make_pair(0.0f,seed));
 	curvals.insert(make_pair(seed,0.0f));
 	it++;
-	__gnu_cxx::hash_set<int>visited;
+	hash_set<int>visited;
 	float r1, r2;
 
 	while(!q.empty())
