@@ -11,6 +11,7 @@ namespace po = boost::program_options;
 #include "util.h"
 
 using namespace std;
+const string VERSION = "2.0.4";
 
 // this main call is to run the code in batch and output features in the same file
 int main(int argc, char **argv)
@@ -49,23 +50,8 @@ int main(int argc, char **argv)
 
 		if (vm.count("version"))
 		{
-			string version;
-			try
-			{
-				ifstream version_file ("VERSION");
-				if (version_file.is_open())
-				{
-					getline (version_file, version);
-				}
-				version_file.close();
-				cout << argv[0] << " " << version << endl;
-				return 0;
-			}
-			catch(const std::exception& e)
-			{
-				std::cerr << e.what() << endl;
-			}
-			return 1;
+			cout << argv[0] << " " << VERSION << endl;
+			return 0;
 		}
 
 		if (vm.count("help") || !(vm.count("input-file") && vm.count("output-file") && vm.count("scale")))
