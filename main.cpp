@@ -1,39 +1,99 @@
 #define NOMINMAX
 
+#include <boost/program_options.hpp>
+#include <iostream>
+#include <fstream>
+
+using namespace boost;
+namespace po = boost::program_options;
+
 #include "menu.h"
 #include "util.h"
 
 using namespace std;
 
 // this main call is to run the code in batch and output features in the same file
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
-	//printf("main\n");
-        //printf("%d",argc);
-
-        // argc includes the name of executable - so, the number of args is "arc-1"
-	if (argc != 4)
+	try
 	{
-                //name_of_exe=rsa-skel
-		printf("Usage: skel [fileinput] [fileoutput] [scale] \nExitting. Try again.\n");
-                // it gives: name_of_exe=/usr/local/bin/skel/skel-2.0
-                //cout << "Usage: " << argv[0] << " [fileinput] [fileoutput] [scale]  \nExitting. Try again.\n" << endl;
-		return 0;
-	}else{
+		// Declare the supported options.
+		// Declare a group of options that will be
+		// allowed only on command line
+		po::options_description generic("Allowed options");
+		float scale;
+		generic.add_options()
+			("version,V", "show program's version number and exit")
+			("help,h", "show this help message and exit")
+			;
+
+		po::options_description hidden("Hidden options");
+		hidden.add_options()
+			("input-file","input filepath, point cloud file (.out)")
+			("output-file","output filepath, tab-delimited text file (.tsv)")
+			("scale", po::value<float>(&scale)->default_value(2.25f), "scale level. increase to reduce skeleton complexity.")
+		;
+
+		po::positional_options_description p;
+		p.add("input-file", 1).add("output-file", 1).add("scale", 1);
+
+		po::options_description cmdline_options;
+		cmdline_options.add(generic).add(hidden);
+		auto args = po::command_line_parser(argc, argv)
+									.options(cmdline_options)
+									.positional(p)
+									.run();
+		po::variables_map vm;
+		po::store(args, vm);
+		po::notify(vm);
+
+		if (vm.count("version"))
+		{
+			string version;
+			try
+			{
+				ifstream version_file ("VERSION");
+				if (version_file.is_open())
+				{
+					getline (version_file, version);
+				}
+				version_file.close();
+				cout << argv[0] << " " << version << endl;
+				return 0;
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr << e.what() << endl;
+			}
+			return 1;
+		}
+
+		if (vm.count("help") || !(vm.count("input-file") && vm.count("output-file") && vm.count("scale")))
+		{
+			cout << "Usage: " << argv[0] << " [fileinput] [fileoutput] [scale]" << endl << endl;
+			cout << generic << endl;;
+			return 1;
+		}
+
+		string fileinput = vm["input-file"].as<string>();
+		string fileoutput = vm["output-file"].as<string>();
+
 		cout << "Executing: " << argv[0] << endl;
-		cout << "fileinput: " << argv[1] << endl;
-		cout << "fileoutput: " << argv[2] << endl;
-		cout << "scale: " << argv[3] << endl;
+		cout << "fileinput: " << fileinput << endl;
+		cout << "fileoutput: " << fileoutput << endl;
+		cout << "scale: " << scale << endl;
 		cout << "\nProcessing ... " << endl;
 
-		string fileinput=argv[1];
-		string fileoutput=argv[2];
-		float scale=(float)atof(argv[3]);
-		skel_and_features_pipeline(fileinput,fileoutput,scale);
-	}
-        return 0;
-}
+		skel_and_features_pipeline(fileinput, fileoutput, scale);
 
+	}
+	catch (std::exception &e)
+	{
+		cout << e.what() << "\n";
+		return 1;
+	}
+	return 0;
+}
 
 /*int main(int argc, char ** argv)
 {
@@ -108,18 +168,3 @@ int main(int argc, char ** argv)
 	}
     return 0;
   }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

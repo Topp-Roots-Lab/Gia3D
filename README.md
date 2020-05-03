@@ -27,7 +27,7 @@ skel /path/to/point/cloud.out /path/to/features.tsv 2.25
 
 #### Output
 
-|File Format|Description|Purpsoe|
+|File Format|Description|Purpose|
 |-|-|-|
 or.iv|||
 or.wrl|Object Mesh|Quality Control|
