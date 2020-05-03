@@ -8,7 +8,7 @@ SOURCES = main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp util.cpp $(_SOURCES:%=
 _DEPS = /usr/local/src/qhull-2012.1/src/libqhull/
 DEPS =$(_DEPS:%=-I%)
 
-LIBS =-lqhullstatic
+LIBS =-lqhullstatic -lboost_program_options
 
 skel:
 	$(CXX) $(CXXFLAGS) $(SOURCES) $(DEPS) $(LIBS) -o $@ $^
