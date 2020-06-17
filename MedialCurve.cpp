@@ -15,7 +15,7 @@ extern "C" { // tell the C++ compiler that you have C decls
 }
 #endif
 
-//#define DEBUG
+// #define DEBUG
 
 // 2012-09-20
 //
@@ -35,9 +35,9 @@ MedialCurve::MedialCurve(void)
 {
 }
 
-/**
-* clone the object
-*/
+/*
+ * clone the object
+ */
 MedialCurve::MedialCurve(MedialCurve &rm)
 {
 	xsize=rm.xsize;
@@ -47,9 +47,9 @@ MedialCurve::MedialCurve(MedialCurve &rm)
 	// copy the hash map of voxel set
 	voxset.insert(rm.voxset.begin(), rm.voxset.end());
 }
-///**
-//* create a new object from the file: Randy Clark's format of the root representation RTVOX
-//*/
+/*
+ * create a new object from the file: Randy Clark's format of the root representation RTVOX
+ */
 MedialCurve::MedialCurve(string filename, int off)
 {
 	ifstream f;
@@ -57,7 +57,7 @@ MedialCurve::MedialCurve(string filename, int off)
 	string line;
 
 	if(!f)
-		cout<< "Error during opening file!";
+		cerr << "Error during opening file!" << endl;
 
 	offset=off;
 	int a=0, b=0, c=0, zlen;
@@ -148,79 +148,98 @@ MedialCurve::MedialCurve(string filename, int off)
 	name=filename;
 }
 
-/**
-* create a new object from the file: Ying's format of the root representation
-*/
+/*
+ * Create a new object from the file: Ying's format of the root representation
+ *
+ * @param filename Point cloud (.OUT) filepath
+ * @param off
+ * @param ying Placeholder value to trigger this overloaded constructor based on paramters
+ */
 MedialCurve::MedialCurve(string filename, int off, bool ying)
 {
+	cout << "Instantiate MedialCurve using Ying's format of the root representation" << endl;
 	ifstream f;
 	f.open(filename.c_str());
 	string line;
 
-	if(!f)
-		cout<< "Error during opening file!";
+	if (!f)
+		cerr << "Error during opening file: '" << filename << "'" << endl;
 
-	offset=off;
-	int a=0, b=0, c=0;
-	int p=0, pt=0;
-	string  zstr, xystr;
+	offset = off;
+	int a = 0, b = 0, c = 0;
+	int p = 0, pt = 0;
+	string zstr, xystr;
 	vector<string> ptr;
-	int k=0;
+	int k = 0;
 
-	int nvox;
-	vector<vector<int> > coords;
+	int nvox; // total number of voxels
+	vector<vector<int>> coords;
 	int minx, maxx, miny, maxy, minz, maxz;
-	minx=INT_MAX; miny=INT_MAX; minz=INT_MAX;
-	maxx=INT_MIN; maxy=INT_MIN; maxz=INT_MIN;
-	//first line is the cell size - skip
+	minx = INT_MAX;
+	miny = INT_MAX;
+	minz = INT_MAX;
+	maxx = INT_MIN;
+	maxy = INT_MIN;
+	maxz = INT_MIN;
+	// Skip version comment or cell size (i.e., 0.15)
 	std::getline(f, line);
 	//second line - is the number of non-empty cells
 	std::getline(f, line);
-	//reserve the space for all the coordinates
-	nvox=atoi(line.c_str());
-	coords.resize(nvox);
-	for(int i=0; i<nvox; i++)
-		coords[i].resize(3);
-	while(std::getline(f, line)) // Read line by line
-	{
+	cout << "Number of non-empty cells (i.e., occupied voxels) for '" << filename << "':\t" << line << endl;
+	nvox = atoi(line.c_str());
 
+	//reserve the space for all the coordinates
+	coords.resize(nvox);
+	for (int i = 0; i < nvox; i++)
+		coords[i].resize(3);
+
+	// Read point cloud data
+	cout << "Reading "<< nvox << " points from '" << filename << "'" << endl;
+	while (std::getline(f, line)) // Read line by line
+	{
 		tokenize(line, ptr, " ");
-		coords[k][0]=atoi(ptr[0].c_str());
-		coords[k][2]=atoi(ptr[1].c_str());
-		coords[k][1]=atoi(ptr[2].c_str());
+		coords[k][0] = atoi(ptr[0].c_str());
+		coords[k][2] = atoi(ptr[1].c_str());
+		coords[k][1] = atoi(ptr[2].c_str());
 		ptr.clear();
 
 		//update min and max
-		if (minx>coords[k][0]) minx=coords[k][0];
-		if (miny>coords[k][1]) miny=coords[k][1];
-		if (minz>coords[k][2]) minz=coords[k][2];
-		if (maxx<coords[k][0]) maxx=coords[k][0];
-		if (maxy<coords[k][1]) maxy=coords[k][1];
-		if (maxz<coords[k][2]) maxz=coords[k][2];
+		if (minx > coords[k][0])
+			minx = coords[k][0];
+		if (miny > coords[k][1])
+			miny = coords[k][1];
+		if (minz > coords[k][2])
+			minz = coords[k][2];
+		if (maxx < coords[k][0])
+			maxx = coords[k][0];
+		if (maxy < coords[k][1])
+			maxy = coords[k][1];
+		if (maxz < coords[k][2])
+			maxz = coords[k][2];
 		k++;
 	}
 	f.close();
-	name=filename;
+	name = filename;
 	//find the middle place of the root
-	int midx=minx+(int)ceil((float)((maxx-minx)/2));
-	int midy=miny+(int)ceil((float)((maxy-miny)/2));
-	int midz=minz+(int)ceil((float)((maxz-minz)/2));
-	xsize=maxx-minx+1+2*offset;
-	ysize=maxy-miny+1+2*offset;
-	zsize=maxz-minz+1+2*offset;
-	for(int i=0; i<nvox; i++)
+	int midx = minx + (int)ceil((float)((maxx - minx) / 2));
+	int midy = miny + (int)ceil((float)((maxy - miny) / 2));
+	int midz = minz + (int)ceil((float)((maxz - minz) / 2));
+	xsize = maxx - minx + 1 + 2 * offset;
+	ysize = maxy - miny + 1 + 2 * offset;
+	zsize = maxz - minz + 1 + 2 * offset;
+	for (int i = 0; i < nvox; i++)
 	{
-		coords[i][0]=coords[i][0]-minx+offset;
-		coords[i][1]=coords[i][1]-miny+offset;
-		coords[i][2]=coords[i][2]-minz+offset;
+		coords[i][0] = coords[i][0] - minx + offset;
+		coords[i][1] = coords[i][1] - miny + offset;
+		coords[i][2] = coords[i][2] - minz + offset;
 	}
 
 	/*xsize=2*midx+2*offset;
 	ysize=2*midy+2*offset;
 	zsize=2*midz+2*offset;*/
 	//now convert coordinates to linear indices;
-	for(int i=0; i<nvox; i++)
-		voxset.insert(make_pair(subind2linind(coords[i][0],coords[i][1],coords[i][2]),1.f));
+	for (int i = 0; i < nvox; i++)
+		voxset.insert(make_pair(subind2linind(coords[i][0], coords[i][1], coords[i][2]), 1.f));
 }
 
 MedialCurve::~MedialCurve(void)
@@ -848,9 +867,9 @@ int getFacesToBeRemoved(vector<bool> &nb26)
 * buttom:	3 4 5	middle: 12    13  top:	20 21 22
 * 			0 1 2			9  10 11		17 18 19
 * the edges are indexed in the following manner:
-* 		 /|-----10-----/|
-* 		/ |			  / |
-* 	   11 |          9  |
+* 		   /|-----10-----/|
+* 		  / |			      / |
+* 	  11  |          9  |
 *     /   |	        /   |
 * 	 /----+--- 8---|    |
 * 	 |    |        |    |
@@ -1000,17 +1019,16 @@ void MedialCurve::getTipsList(__gnu_cxx::hash_set<int> &tips)
 	}
 }
 
-/**
-* This function performs a number of sjape repair prpcedures.
-* One connceted component without inner cavities is assumed.
-* First all connceted components except the biggest will be removed.
-* Then, connceted components of the background are computed,
-* and smaller components corresponding to inner cavities are removed (added to the object)
-*/
+/*
+ * This function performs a number of shape repair prpcedures.
+ * One connceted component without inner cavities is assumed.
+ * First, all connceted components except the biggest will be removed.
+ * Then, connceted components of the background are computed,
+ * and smaller components corresponding to inner cavities are removed (added to the object)
+ */
 void MedialCurve::repair()
 {
-//#define DEBUG
-	vector<set<int> > cc;
+	vector<set<int> > cc; // connected component list
 #ifdef DEBUG
 	printf("Computing connected components...\n");
 #endif
@@ -1168,7 +1186,7 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 	getConnectedComponents(bd,bcc,6);
 	//printf("Number connected components of background 6nb: %d\n",bcc.size());
 #ifdef DEBUG
-		printf(" There are %i boundary components.\n",bcc.size());
+		printf(" There are %lu boundary components.\n",bcc.size());
 #endif
 	if(bcc.size()==1) return;
 
@@ -1219,7 +1237,7 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 			{q.push(temp); bcfill.insert(temp);}
 		}
 #ifdef DEBUG
-		printf(" %i boundary cc has %i voxels\n",i+1, bcfill.size());
+		printf(" %i boundary cc has %lu voxels\n",i+1, bcfill.size());
 #endif
 		bcc[i].swap(bcfill);
 	}
@@ -1238,71 +1256,81 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 }
 
 //
-///**
-//* This function computes root features.
-//* The features are stored in the map, where the key is the name of the feature.
-//* The following features are computed:
-//* SurfArea, Volume, Convex_Volume, Solidity, Medium number of roots (MedR),
-//* Max number of roots (MaxR), Bushiness, Depth, Horizontal Equivalent Radius(HorEqDiameter),
-//* TotalLength, SRL((=TotalLength/Volume)), Length_Distr, W_D_ratio (=HorEqDiameter/Depth)
-//*/
-void MedialCurve::computeFeatures(vector<pair<string,double> > &features, MedialCurve &skel)
+/*
+ * This function computes root features.
+ * The features are stored in the map, where the key is the name of the feature.
+ * The following features are computed:
+ * - SurfArea
+ * - Volume
+ * - Convex_Volume
+ * - Solidity
+ * - Medium number of roots (MedR)
+ * - Max number of roots (MaxR)
+ * - Bushiness
+ * - Depth
+ * - Horizontal Equivalent Radius (HorEqDiameter)
+ * - TotalLength
+ * - SRL((=TotalLength/Volume))
+ * - Length_Distr
+ * - W_D_ratio (=HorEqDiameter/Depth)
+ */
+void MedialCurve::computeFeatures(vector<pair<string, double>> &features, MedialCurve &skel)
 {
 	clock_t start, end;
 	double elapsed;
-	start=clock();
+	start = clock();
 	//surface area
-	features.push_back(make_pair("SurfArea",computeSurfaceArea()));
+	features.push_back(make_pair("SurfArea", computeSurfaceArea()));
 	//lateral_surface_area
 	//features.insert(make_pair("SurfArea_lateral",computeSurfaceArea_lateral()));
 	//volume
-	double volume=voxset.size();
-	features.push_back(make_pair("Volume",volume));
+	double volume = voxset.size();
+	features.push_back(make_pair("Volume", volume));
 	//convex volume
-	double conv_volume=computeConvexVolume();
-	features.push_back(make_pair("Convex_Volume",conv_volume));
+	double conv_volume = computeConvexVolume();
+	features.push_back(make_pair("Convex_Volume", conv_volume));
 	//solidity
-	features.push_back(make_pair("Solidity",volume/conv_volume));
+	features.push_back(make_pair("Solidity", volume / conv_volume));
 	// compute sweeping features
 	double maxHorConvR;
 	double medR, maxR, depth, miny;
 	// med number of roots
 	//max number of roots
 	computeSweepingFeatures(medR, maxR, maxHorConvR, depth, miny);
-	features.push_back(make_pair("MedR",medR));
-	features.push_back(make_pair("MaxR",maxR));
+	features.push_back(make_pair("MedR", medR));
+	features.push_back(make_pair("MaxR", maxR));
 	//bushiness
-	features.push_back(make_pair("Bushiness",maxR/medR));
+	features.push_back(make_pair("Bushiness", maxR / medR));
 	// average radius
 	// depth
-	features.push_back(make_pair("Depth",depth));
+	features.push_back(make_pair("Depth", depth));
 	//max horizontal distance = equivalent diameter of the convex hull
-	features.push_back(make_pair("HorEqDiameter",maxHorConvR));
+	features.push_back(make_pair("HorEqDiameter", maxHorConvR));
 	//total length
-	features.push_back(make_pair("TotalLength",skel.voxset.size()));
+	features.push_back(make_pair("TotalLength", skel.voxset.size()));
 	// SRL - total root length/ volume
-	features.push_back(make_pair("SRL",skel.voxset.size()/volume));
+	features.push_back(make_pair("SRL", skel.voxset.size() / volume));
 	// len distr
-	features.push_back(make_pair("Length_Distr",computeLengthDistribution(skel,depth,miny)));
+	features.push_back(make_pair("Length_Distr", computeLengthDistribution(skel, depth, miny)));
 	// W/D
-	features.push_back(make_pair("W_D_ratio",maxHorConvR/depth));
+	features.push_back(make_pair("W_D_ratio", maxHorConvR / depth));
 
 	//print features
-	map<string,double>::iterator it;
+	map<string, double>::iterator it;
 	end = clock();
-	elapsed = ((double) (end - start)) / CLOCKS_PER_SEC;
+	elapsed = ((double)(end - start)) / CLOCKS_PER_SEC;
 	//printf("Computing traits... Elapsed time: %.2f\n\n", elapsed);
 	//for(it=features.begin(); it!=features.end(); it++)
 	//	printf("%s:\t %.2f\n",it->first.c_str(), it->second);
 	//remove temporal file
 }
 
-
 /*
 * This function computes features estimated with the use of skeleton: depth, total length, #tips, volume, surface area
 */
 void MedialCurve::computeSkeletonEstimatedFeatures(vector<pair<string,double> > &features, __gnu_cxx::hash_map<int,float> &dtmap)
 {
+	cout << "computeSkeletonEstimatedFeatures" << endl;
 	//depth compuation - y coordinate
 	__gnu_cxx::hash_map<int,float>::iterator it;
 	__gnu_cxx::hash_map<int,float>::iterator it2;

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.0 - 2020-06-16
+
+### Added
+
+- Added run-time flag to enable IV generation
+- Executable version recorded as comment in generated WRL files
+
+### Changed
+
+- Disable IV generation by default
+
 ## v2.0.4 - 2020-05-03
 
 ### Added

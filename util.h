@@ -1,10 +1,11 @@
-#ifndef UTIL_H 
-	#define UTIL_H 
+#ifndef UTIL_H
+	#define UTIL_H
 
 #include <string>
 #include <vector>
 #include "MedialCurve.h"
 
+const string VERSION = "skeletonization-and-features-pipeline 2.1.0";
 // 2012-09-20
 //
 // Vladimir Popov added, when adjusting this code to Linux

@@ -1,7 +1,8 @@
-#ifndef MENU_H 
+#ifndef MENU_H
 	#define MENU_H
 
 #include<string>
+#include<map>
 
 // 2012-09-20
 //
@@ -11,9 +12,5 @@
 
 using namespace std;
 
-void skel_and_features(string filename, float scale);
-void skel_and_features_pipeline(string fileinput, string fileoutput, float scale);
-void root_graph_output(string filename);
-void root_features_range(string filename);
-void root_repair(string filename);
+void skel_and_features_pipeline(string fileinput, string fileoutput, float scale, map<string, bool> output_flags);
 #endif
