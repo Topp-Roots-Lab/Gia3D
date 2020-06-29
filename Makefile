@@ -1,6 +1,7 @@
 IDIR =./cc/voxel/
 CXX = g++
 CXXFLAGS = -Wno-deprecated -std=c++0x
+PREFIX = /usr/local
 
 _SOURCES = Voxels.cc VoxelRef.cc VoxelFilter.cc PalagyiFilter.cc Template.cc Templates.cc 
 SOURCES = main.cpp menu.cpp MedialCurve.cpp RootGraph.cpp util.cpp $(_SOURCES:%=$(IDIR)%)
@@ -17,3 +18,12 @@ skel:
 
 clean:
 	rm -vf skel
+
+.PHONY: install
+install: skel
+	mkdir -pv $(DESTDIR)$(PREFIX)/bin
+	cp -v skel $(DESTDIR)$(PREFIX)/bin/Skeleton
+
+.PHONY: uninstall
+uninstall:
+	rm -vf $(DESTDIR)$(PREFIX)/bin/Skeleton
