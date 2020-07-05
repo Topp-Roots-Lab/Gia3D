@@ -38,6 +38,8 @@ void skel_and_features_pipeline(string fileinput, string fileoutput, float scale
 
 	// create a root model from the file //rtvox format
 	MedialCurve root(fileinput, 1, 1);
+	// Checkpoint message: root repair
+	cout << "Repairing voxel set" << endl;
 	root.repair();
 	__gnu_cxx::hash_map<int, float> dist_tr;
 	root.dt(dist_tr);
@@ -45,10 +47,10 @@ void skel_and_features_pipeline(string fileinput, string fileoutput, float scale
 	MedialCurve skel(root);
 
 	// write output of the original model
-	printf("\nVisual output of the original object ...\n");
+	cout << "Visual output of the original object" << endl;
 	filestorename = fileinput.substr(0, fileinput.rfind('.')) + "_or";
 
-	// Generate file format if specified at execution time 
+	// Generate file format if specified at execution time
 		// iv
 	if (output_flags["iv"]) {
 		printf("Type file = iv\n");
@@ -65,7 +67,7 @@ void skel_and_features_pipeline(string fileinput, string fileoutput, float scale
 	skel.createSkeleton(scale);
 	//output skeleton to the file
 	filestorename = fileinput.substr(0, fileinput.rfind('.')) + "_sk";
-	printf("\nVisual output of the skeleton ...\n");
+	cout << "Visual output of the skeleton" << endl;
 
 	// iv
 	if (output_flags["iv"]) {
@@ -83,9 +85,13 @@ void skel_and_features_pipeline(string fileinput, string fileoutput, float scale
 	vector<pair<string, double>> bif_features;
 	vector<pair<string, double>> e_features;
 	vector<pair<string, double>> sk_features;
+	cout << "Compute root features" << endl;
 	root.computeFeatures(features, skel);
+	cout << "Compute bifurcation cluster features" << endl;
 	skel.getBifClusterFeatures(bif_features);
+	cout << "Compute edge features" << endl;
 	skel.getEdgesFeatures(e_features);
+	cout << "Compute skeleton estimated features" << endl;
 	skel.computeSkeletonEstimatedFeatures(sk_features, dist_tr);
 
 	//output features into the file

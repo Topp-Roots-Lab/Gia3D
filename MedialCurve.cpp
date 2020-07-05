@@ -45,6 +45,7 @@ MedialCurve::MedialCurve(MedialCurve &rm)
 	zsize=rm.zsize;
 	name=rm.name;
 	// copy the hash map of voxel set
+	cout << "Copy the hash map of voxel set" << endl;
 	voxset.insert(rm.voxset.begin(), rm.voxset.end());
 }
 /*
@@ -52,6 +53,7 @@ MedialCurve::MedialCurve(MedialCurve &rm)
  */
 MedialCurve::MedialCurve(string filename, int off)
 {
+	cout << "Instantiate MedialCurve using Randy Clark's format of the root representation" << endl;
 	ifstream f;
 	f.open(filename.c_str());
 	string line;
@@ -185,7 +187,7 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 	std::getline(f, line);
 	//second line - is the number of non-empty cells
 	std::getline(f, line);
-	cout << "Number of non-empty cells (i.e., occupied voxels) for '" << filename << "':\t" << line << endl;
+	cout << "Number of non-empty cells (i.e., occupied voxels) for '" << filename << "': " << line << endl;
 	nvox = atoi(line.c_str());
 
 	//reserve the space for all the coordinates
@@ -193,10 +195,19 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 	for (int i = 0; i < nvox; i++)
 		coords[i].resize(3);
 
+	// Checkpoint message: Load in point cloud data
 	// Read point cloud data
-	cout << "Reading "<< nvox << " points from '" << filename << "'" << endl;
+	cout << "Loading "<< nvox << " points from '" << filename << "'...";
+	int ptCounter = 0;
 	while (std::getline(f, line)) // Read line by line
 	{
+		// TODO(tparker): Set some step value for when to report back how many have been read from file
+		ptCounter++;
+		if ((ptCounter - 1) % int(floor(nvox/200)) == 0 || ptCounter == nvox)
+		{
+			cout << "\rLoad point " << ptCounter << " of " << nvox << " from " << filename << flush;
+		}
+		// cout << endl;
 		tokenize(line, ptr, " ");
 		coords[k][0] = atoi(ptr[0].c_str());
 		coords[k][2] = atoi(ptr[1].c_str());
@@ -218,7 +229,11 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 			maxz = coords[k][2];
 		k++;
 	}
+	cout << endl;
 	f.close();
+
+	// Checkpoint message: reposition system to center
+	cout << "Centering point in 3-D space...";
 	name = filename;
 	//find the middle place of the root
 	int midx = minx + (int)ceil((float)((maxx - minx) / 2));
@@ -238,8 +253,19 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 	ysize=2*midy+2*offset;
 	zsize=2*midz+2*offset;*/
 	//now convert coordinates to linear indices;
+	// Checkpoint message: convert to voxel set pairs
+	cout << "Converting to voxel set pairs...";
+	ptCounter = 0;
 	for (int i = 0; i < nvox; i++)
+	{
 		voxset.insert(make_pair(subind2linind(coords[i][0], coords[i][1], coords[i][2]), 1.f));
+		ptCounter++;
+		if ((ptCounter - 1) % int(floor(nvox/200)) == 0 || ptCounter == nvox)
+		{
+			cout << "\rAdd voxel " << ptCounter << " of " << nvox << " from " << filename << flush;
+		}
+	}
+	cout << endl;
 }
 
 MedialCurve::~MedialCurve(void)
@@ -1029,17 +1055,15 @@ void MedialCurve::getTipsList(__gnu_cxx::hash_set<int> &tips)
 void MedialCurve::repair()
 {
 	vector<set<int> > cc; // connected component list
-#ifdef DEBUG
-	printf("Computing connected components...\n");
-#endif
+	cout << "  Computing connected components" << endl;
 	__gnu_cxx::hash_set<int> vset;
 	for(__gnu_cxx::hash_map<int,float>::iterator it=voxset.begin(); it!=voxset.end(); it++)
+	{
 		vset.insert(it->first);
+	}
 	getConnectedComponents(vset,cc,26);
 	//printf("Number connected components of foreground 26nb: %d\n",cc.size());
-#ifdef DEBUG
-	printf("Removing small connected components...\n");
-#endif
+	cout << "  Removing small connected components" << endl;
 	int del=0;
 	//get max size of connected components
 	int ms=0;
@@ -1067,13 +1091,9 @@ void MedialCurve::repair()
 			del++;
 		}
 	}
-#ifdef DEBUG
-	printf("Removed %i connected components\n", del);
-#endif
+	cout << "  Removed " << del << " connected components" << endl;
 	//fill the cavities only in max component
-#ifdef DEBUG
-	printf("Filling cavities...\n");
-#endif
+	cout << "  Filling cavities.." << endl;
 	set<int> cavity;
 	for(int i=0; i<(int)cc.size(); i++)
 	{
@@ -1162,9 +1182,7 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 {
 	set<int>::iterator it;
 	__gnu_cxx::hash_set<int> bd;
-#ifdef DEBUG
-	printf("Collecting boundary voxels...\n");
-#endif
+	cout << "Collecting boundary voxels" << endl;
 	// find all boundary voxels, i.e. voxels which has an empty neighbor voxel
 	for(it=cc.begin(); it!=cc.end(); ++it)
 	{
@@ -1178,16 +1196,12 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 						bd.insert(temp);
 				}
 	}
-#ifdef DEBUG
-	printf("Computing cc of bd voxels...\n");
-#endif
+	cout << "Computing connected components of boundary voxels" << endl;
 	//now compute connected components of bd voxels using 6 connectivity scheme
 	vector<set<int> >bcc(0);
 	getConnectedComponents(bd,bcc,6);
 	//printf("Number connected components of background 6nb: %d\n",bcc.size());
-#ifdef DEBUG
-		printf(" There are %lu boundary components.\n",bcc.size());
-#endif
+	cout << "There are " << bcc.size() << " boundary components" << endl;
 	if(bcc.size()==1) return;
 
 	//find the maximum connceted component - it is the outmost boundary
@@ -1249,9 +1263,7 @@ void MedialCurve::fillCavities(set<int> &cc, set<int> &cavity)
 			cavity.insert(*it);
 		filled=filled+bcc[i].size();
 	}
-#ifdef DEBUG
-	printf("Number of filled voxels: %i\n", filled);
-#endif
+	cout << "Number of filled voxels: " << filled << endl;
 
 }
 

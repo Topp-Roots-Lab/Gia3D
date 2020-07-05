@@ -5,7 +5,7 @@
 #include <vector>
 #include "MedialCurve.h"
 
-const string VERSION = "skeletonization-and-features-pipeline 2.1.0";
+const string VERSION = "skeletonization-and-features-pipeline 2.1.2";
 // 2012-09-20
 //
 // Vladimir Popov added, when adjusting this code to Linux
