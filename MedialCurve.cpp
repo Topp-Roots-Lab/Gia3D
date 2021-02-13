@@ -242,6 +242,10 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 	xsize = maxx - minx + 1 + 2 * offset;
 	ysize = maxy - miny + 1 + 2 * offset;
 	zsize = maxz - minz + 1 + 2 * offset;
+	std::cout << "Describe 'X' <min, mid, max>: (" << minx << ", " << midx << ", " << maxx << ")" << std::endl;
+	std::cout << "Describe 'Y' <min, mid, max>: (" << miny << ", " << midy << ", " << maxy << ")" << std::endl;
+	std::cout << "Describe 'Z' <min, mid, max>: (" << minz << ", " << midz << ", " << maxz << ")" << std::endl;
+	std::cout << "<xsize, ysize, zsize> = (" << xsize << ", " << ysize << ", " << zsize << ")" << std::endl;
 	for (int i = 0; i < nvox; i++)
 	{
 		coords[i][0] = coords[i][0] - minx + offset;
@@ -893,8 +897,8 @@ int getFacesToBeRemoved(vector<bool> &nb26)
 * buttom:	3 4 5	middle: 12    13  top:	20 21 22
 * 			0 1 2			9  10 11		17 18 19
 * the edges are indexed in the following manner:
-* 		   /|-----10-----/|
-* 		  / |			      / |
+* 		 /|-----10-----/|
+* 		/ |			  / |
 * 	  11  |          9  |
 *     /   |	        /   |
 * 	 /----+--- 8---|    |
@@ -1059,6 +1063,7 @@ void MedialCurve::repair()
 	__gnu_cxx::hash_set<int> vset;
 	for(__gnu_cxx::hash_map<int,float>::iterator it=voxset.begin(); it!=voxset.end(); it++)
 	{
+		// 'first' is the (x,y,z) coordinate for the current voxel for the pair: (<x,y,z>, 1.f)
 		vset.insert(it->first);
 	}
 	getConnectedComponents(vset,cc,26);
@@ -1111,7 +1116,7 @@ void MedialCurve::repair()
 * This function computes connected components of the list of linear indices given in vset.
 * Each connceted component is stored as an element of the vector,
 * and it is represented by a  set of linear indices.
-* The third argument is the connectevity scheme: it should be 26 for foregrounf and 6 for background
+* The third argument is the connectevity scheme: it should be 26 for foreground and 6 for background
 */
 int MedialCurve::getConnectedComponents(__gnu_cxx::hash_set<int> &vset, vector<set<int> > &cc, int conn)
 {

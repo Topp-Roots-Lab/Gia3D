@@ -50,8 +50,13 @@ void skel_and_features_pipeline(string fileinput, string fileoutput, float scale
 	cout << "Visual output of the original object" << endl;
 	filestorename = fileinput.substr(0, fileinput.rfind('.')) + "_or";
 
+<<<<<<< Updated upstream
 	// Generate file format if specified at execution time
 		// iv
+=======
+	// Generate file format if specified at execution time 
+	// iv
+>>>>>>> Stashed changes
 	if (output_flags["iv"]) {
 		printf("Type file = iv\n");
 		writeVisibleIvWrlEff(filestorename, root, 1);
