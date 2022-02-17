@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.3
+
+### Changed
+
+- Renamed `volume` to `cylindrical_volume`
+- Renamed `surface_area` to `cylindrical_surface_area`
+- Revised comments and debug statements to be more helpful
+
+### Fixed
+
+- Fixed typos
+
 ## v2.1.2
 
 ### Changed
