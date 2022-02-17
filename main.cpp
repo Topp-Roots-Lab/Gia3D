@@ -78,7 +78,6 @@ int main(int argc, char **argv)
 		cout << "WRL write-flag: " << output_flags["wrl"] << endl;
 		cout << "IV write-flag: " << output_flags["iv"] << endl;
 
-		// cout <<
 		skel_and_features_pipeline(fileinput, fileoutput, scale, output_flags);
 	}
 	catch (std::exception &e)

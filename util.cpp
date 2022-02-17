@@ -318,10 +318,15 @@ void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type)
 	fileout=fileout+".iv";*/
 
 	//char strsc[100];
-	float r = 0.75f;
-	float g = 0.35f;
-	float b = 0.01f;
-	float tr = 0.0f;
+	float r=0.75f;
+	float g=0.35f;
+	float b=0.01f;
+	float tr=0.0f;
+	// float r = 0.60f;
+	// float g = 0.60f;
+	// float b = 0.60f;
+	// float tr = 0.0f;
+	cout << "Mesh color set to rgba(" << r << ", " << g << ", " << b << ", " << tr << ")" << endl;
 	//Uncomment this part if you want a user input on color choice
 	/*printf("Enter the color of the object for visualization (r g b format)] :\n");
 	printf("red: ");
@@ -368,17 +373,27 @@ void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type)
 		fprintf(f, "point [\n");
 		////////////////////////////////////////////////////
 	}
+	// Checkpoint message: Create WRL output file
+	int linesToProcess = (int)coordall.size() + (int)inds.size();
+	cout << "Writing WRL '" << filename << "' (" << linesToProcess << ")" << endl;
 
 	// add comma after every point, except for the last one
 	// to be able to view IV file with IV Viewer (installed on BioRoss Linux server) otherwise it does not work -
 	// gives error when reading file.
 	// (For Windows IV Viewer, there is no need for comma: viewer shows file without commas)
 	int last = (int)coordall.size() - 1;
+	int ptCounter = 0;
 	for (int i = 0; i < last; i++)
 	{
+		ptCounter++;
+		if ((ptCounter - 1) % int(floor(last/200)) == 0 || ptCounter == last)
+		{
+			cout << "\rWrite point " << ptCounter << " of " << last << " from " << filename << " to mesh" << flush;
+		}
 		fprintf(f, "%d %d %d,\n", coordall[i][0], coordall[i][1], coordall[i][2]);
 	}
 	fprintf(f, "%d %d %d\n", coordall[last][0], coordall[last][1], coordall[last][2]);
+	cout << endl;
 
 	fprintf(f, "]\n }\n");
 	if (type == 1)
@@ -403,10 +418,17 @@ void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type)
 	// gives error when reading file.
 	// (For Windows IV Viewer, there is no need for commas: viewer shows file without commas)
 	int last2 = (int)inds.size() - 1;
+	ptCounter = 0;
 	for (int i = 0; i < last2; i++)
 	{
+			ptCounter++;
+		if ((ptCounter - 1) % int(floor(last2/200)) == 0 || ptCounter == last2)
+		{
+			cout << "\rWrite face " << ptCounter << " of " << last2 << " from " << filename << " to mesh" << flush;
+		}
 		fprintf(f, "%i,%i,%i,-1,", inds[i][0], inds[i][1], inds[i][2]);
 	}
+	cout << endl;
 	fprintf(f, "%i,%i,%i,-1", inds[last2][0], inds[last2][1], inds[last2][2]);
 
 	fprintf(f, "]\n }\n");
@@ -628,6 +650,11 @@ void writeVisibleIVEff(string filename, MedialCurve &m)
 	float g=0.35f;
 	float b=0.01f;
 	float tr=0.0f;
+	// float r = 0.60f;
+	// float g = 0.60f;
+	// float b = 0.60f;
+	// float tr = 0.0f;
+	cout << "Mesh color set to rgba(" << r << ", " << g << ", " << b << ", " << tr << ")" << endl;
 	//Uncomment this part if you want a user input on color choice
 	/*printf("Enter the color of the object for visualization (r g b format)] :\n");
 	printf("red: ");

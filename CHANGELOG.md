@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## v2.1.2
+
+### Changed
+
+- Loading data shows current progress without flooding stdout (loads in 0.5% increments)
+
+## v2.1.1
+
+### Changed
+
+- Re-enabled existing debug statements
+
 ## v2.1.0 - 2020-06-16
 
 ### Added
