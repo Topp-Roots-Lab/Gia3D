@@ -1390,8 +1390,8 @@ void MedialCurve::computeSkeletonEstimatedFeatures(vector<pair<string,double> > 
 	//features.insert(make_pair("depth",depth));
 	//features.insert(make_pair("total_length",total_length));
 	features.push_back(make_pair("number_tips",ntips));
-	features.push_back(make_pair("volume",vol));
-	features.push_back(make_pair("surface_area",sa));
+	features.push_back(make_pair("cylindrical_volume",vol));
+	features.push_back(make_pair("cylindrical_surface_area",sa));
 	features.push_back(make_pair("av_radius",av_r));
 }
 
