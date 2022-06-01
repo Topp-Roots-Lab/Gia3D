@@ -11,18 +11,19 @@ DEPS =$(_DEPS:%=-I%)
 
 LIBS =-lqhullstatic -lboost_program_options
 
-skel:
-	$(CXX) $(CXXFLAGS) $(SOURCES) $(DEPS) $(LIBS) -o $@ $^
-
 .PHONY: clean
 
 clean:
-	rm -vf skel
+	rm -rvf build
+
+build: clean
+	mkdir -pv build/bin
+	$(CXX) $(CXXFLAGS) $(SOURCES) $(DEPS) $(LIBS) -o build/bin/gia3d
 
 .PHONY: install
-install: skel
+install: build
 	mkdir -pv $(DESTDIR)$(PREFIX)/bin
-	cp -v skel $(DESTDIR)$(PREFIX)/bin/Skeleton
+	cp -v build/bin/gia3d $(DESTDIR)$(PREFIX)/bin/Skeleton
 
 .PHONY: uninstall
 uninstall:
