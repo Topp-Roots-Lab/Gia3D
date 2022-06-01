@@ -233,7 +233,7 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 	f.close();
 
 	// Checkpoint message: reposition system to center
-	cout << "Centering point in 3-D space...";
+	cout << "Centering point in 3-D space..." << std::endl;
 	name = filename;
 	//find the middle place of the root
 	int midx = minx + (int)ceil((float)((maxx - minx) / 2));
@@ -1495,8 +1495,7 @@ double MedialCurve::computeConvexVolume()
 	//coordT *points = &(boundvoxs[0]);           // array of coordinates for each point //
 	boolT ismalloc=False;           // True if qhull should free points in qh_freeqhull() or reallocation //
 	char flags[]= "qhull Tv FA"; // option flags for qhull, see qh_opt.htm //
-	FILE *outfile= fopen("temp.temp","w");//stdout;    // output from qh_produce_output()
-	                             //use NULL to skip qh_produce_output() //
+	FILE* outfile = NULL;  // output from qh_produce_output(), use NULL to skip qh_produce_output() //
 	FILE *errfile= stderr;    // error messages from qhull code //
 	int exitcode;             // 0 if no error from qhull //
 	//facetT *facet;	          // set by FORALLfacets //
@@ -1541,7 +1540,7 @@ void MedialCurve::computeSweepingFeatures(double &medR, double &maxR, double &ma
 	double *pts;
 	boolT ismalloc=False;           // True if qhull should free points in qh_freeqhull() or reallocation //
 	char flags[]= "qhull FA"; // option flags for qhull, see qh_opt.htm //
-	FILE *outfile= fopen("temp.temp","w");//stdout;    // output from qh_produce_output() use NULL to skip qh_produce_output() //
+	FILE* outfile = NULL;  // output from qh_produce_output(), use NULL to skip qh_produce_output() //
 	FILE *errfile= stderr;    // error messages from qhull code //
 	int exitcode;             // 0 if no error from qhull //
 	//facetT *facet;	          // set by FORALLfacets //
