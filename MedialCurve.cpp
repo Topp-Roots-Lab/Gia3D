@@ -233,7 +233,7 @@ MedialCurve::MedialCurve(string filename, int off, bool ying)
 	f.close();
 
 	// Checkpoint message: reposition system to center
-	cout << "Centering point in 3-D space...";
+	cout << "Centering point in 3-D space..." << std::endl;
 	name = filename;
 	//find the middle place of the root
 	int midx = minx + (int)ceil((float)((maxx - minx) / 2));
