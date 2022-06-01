@@ -45,6 +45,10 @@ void tokenize(const string& str,
 }
 /**
 * write the object MedialCurve into IV and VRML(WRL) file
+* @param filename input path
+* @param m medial curve representation of object
+* @param type output file format, '1' saves object as .iv; '2' saves object
+ *			  as .wrl
 */
 void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type)
 {
@@ -375,7 +379,7 @@ void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type)
 	}
 	// Checkpoint message: Create WRL output file
 	int linesToProcess = (int)coordall.size() + (int)inds.size();
-	cout << "Writing WRL '" << filename << "' (" << linesToProcess << ")" << endl;
+	cout << "Writing WRL '" << filename << "' (line count: " << linesToProcess << ")" << endl;
 
 	// add comma after every point, except for the last one
 	// to be able to view IV file with IV Viewer (installed on BioRoss Linux server) otherwise it does not work -
@@ -386,7 +390,8 @@ void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type)
 	for (int i = 0; i < last; i++)
 	{
 		ptCounter++;
-		if ((ptCounter - 1) % int(floor(last/200)) == 0 || ptCounter == last)
+		// if ((ptCounter - 1) % int(floor(last/200)) == 0 || ptCounter == last)
+		if (ptCounter == last)
 		{
 			cout << "\rWrite point " << ptCounter << " of " << last << " from " << filename << " to mesh" << flush;
 		}
@@ -422,7 +427,8 @@ void writeVisibleIvWrlEff(string filename, MedialCurve &m, int type)
 	for (int i = 0; i < last2; i++)
 	{
 			ptCounter++;
-		if ((ptCounter - 1) % int(floor(last2/200)) == 0 || ptCounter == last2)
+		// if ((ptCounter - 1) % int(floor(last2/200)) == 0 || ptCounter == last2)
+		if (ptCounter == last2)
 		{
 			cout << "\rWrite face " << ptCounter << " of " << last2 << " from " << filename << " to mesh" << flush;
 		}
