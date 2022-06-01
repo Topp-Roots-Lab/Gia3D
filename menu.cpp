@@ -110,13 +110,5 @@ void skel_and_features_pipeline(string fileinput, string fileoutput, float scale
 	for (i = 0; i < sk_features.size(); ++i)
 		fprintf(ff, "%.4f\t", sk_features.at(i).second);
 	fclose(ff);
-
-	/*if( remove( "temp.temp" ) != 0 )
-		perror( "Error deleting file" );
-	else
-		puts( "File successfully deleted" );*/
-
-	//remove("C:\Olga\development\root3D_clean\Release\temp.temp");
-
 	cout << "\nDONE. Exiting." << endl;
 }
