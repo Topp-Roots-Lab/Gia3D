@@ -39,7 +39,7 @@ sk.wrl|Skeleton Mesh|Quality Control|
 
 ```bash
 # Download and compile skel binary
-git clone https://github.com/tparkerd/skel.git && cd skel && make
+git clone https://github.com/Topp-Roots-Lab/Gia3D.git && cd Gia3D && make
 ```
 
 ## Additional Information
