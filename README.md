@@ -44,4 +44,4 @@ git clone https://github.com/Topp-Roots-Lab/Gia3D.git && cd Gia3D && make
 
 ## Additional Information
 
-* Original guide can be found in `compile-cmd`
+* Original guide can be found in `compile-cmd`; it can be found in early commits such as here: https://github.com/Topp-Roots-Lab/Gia3D/blob/8872645ec126c41b18dffc92020e0931ff95613f/compile-cmd
