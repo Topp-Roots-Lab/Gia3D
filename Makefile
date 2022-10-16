@@ -44,6 +44,7 @@ install-deps: ## Install dependencies (i.e., qhull)
 install: install-deps build ## Install Gia3D
 	mkdir -pv $(DESTDIR)$(PREFIX)/bin
 	cp -v build/bin/gia3d $(DESTDIR)$(PREFIX)/bin/Skeleton
+	ln -sfv $(DESTDIR)$(PREFIX)/bin/Skeleton $(DESTDIR)$(PREFIX)/bin/gia3d
 
 .PHONY: uninstall
 uninstall: ## Unintall Gia3D
