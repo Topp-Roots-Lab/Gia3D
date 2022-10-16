@@ -35,27 +35,7 @@ sk.iv|||
 sk.wrl|Skeleton Mesh|Quality Control|
 .tsv|Measurements|Analysis|
 
-## Build
-
-### Compile Dependency: `qhull-2012.1`
-
-Run the following commands as root.
-
-```bash
-# Download qhull-2012.1 and compile for liqhullstatic.a
-wget https://github.com/qhull/qhull/archive/2012.1.tar.gz -O - | tar -xvz -C /usr/local/src/ && pushd /usr/local/src/qhull-2012.1 && make && popd
-
-find /usr/local/src/qhull-2012.1/bin -type f -exec ln -sv {} /usr/local/bin \;
-ln -sv /usr/local/src/qhull-2012.1/lib/libqhull_p.so /usr/local/lib/
-ln -sv /usr/local/src/qhull-2012.1/lib/libqhull.so /usr/local/lib/
-ln -sv /usr/local/src/qhull-2012.1/lib/libqhullstatic.a /usr/local/lib/
-ln -sv /usr/local/src/qhull-2012.1/lib/libqhullstatic_p.a /usr/local/lib/
-ln -sv /usr/local/src/qhull-2012.1/lib/libqhullcpp.a /usr/local/lib/
-
-ldconfig
-```
-
-### Compile Project
+### Build & Installation
 
 ```bash
 # Download and compile skel binary
